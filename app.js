@@ -394,10 +394,14 @@ window.removeFromCart = (productId) => {
 
 // Proceed to Checkout
 window.proceedToCheckout = async () => {
+    // Check if user is authenticated
     if (!AuthService.isAuthenticated()) {
         closeModal('cartModal');
-        showNotification('Please login to continue', 'info');
-        openModal('loginModal');
+        showNotification('Please login or create an account to place your order', 'warning');
+        // Import and show login modal
+        import('./auth-modals.js').then(module => {
+            module.showLoginModal();
+        });
         return;
     }
 
