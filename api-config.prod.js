@@ -3,7 +3,7 @@
 
 const API_CONFIG = {
     // Replace this with your actual Render backend URL after deployment
-    BASE_URL: 'https://naijamall-api.onrender.com/api',
+    BASE_URL: 'https://naijamall-34sh.onrender.com/api',
     TIMEOUT: 10000
 };
 

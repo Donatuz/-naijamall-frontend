@@ -1,7 +1,7 @@
 // API Configuration for NaijaMall Backend Integration
 // Configure the backend URL based on environment
 const API_CONFIG = {
-    BASE_URL: 'https://naijamall-api.onrender.com/api',
+    BASE_URL: 'https://naijamall-34sh.onrender.com/api',
     TIMEOUT: 10000
 };
 
