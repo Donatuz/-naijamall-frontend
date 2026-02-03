@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NaijaMall - Fresh Market Delivered to Your Doorstep</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo">NaijaMall</div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#shop" class="nav-link">Shop</a></li>
+                <li><a href="#categories" class="nav-link">Categories</a></li>
+                <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+                <li><a href="#faq" class="nav-link">FAQ</a></li>
+                <li><a href="#sellers" class="nav-link">For Sellers</a></li>
+            </ul>
+            <div class="nav-actions">
+                <span class="cart-icon">🛒 <span class="cart-count">3</span></span>
+                <button class="btn-primary">Get Started</button>
+            </div>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badges">
+                    <span class="badge">Escrow Protected Payments</span>
+                </div>
+                <h1 class="hero-title">Fresh Market Delivered to Your Doorstep</h1>
+                <p class="hero-subtitle">Connect with trusted rural market sellers across Nigeria. Get fresh produce, grains, and groceries delivered same-day with secure escrow payments.</p>
+                <div class="hero-buttons">
+                    <button class="btn-primary btn-large" id="shopFromPlatform">Shop from Platform</button>
+                    <button class="btn-secondary btn-large" id="shopFromAgent">Shop from Agent</button>
+                </div>
+                <div class="hero-features">
+                    <div class="feature-item">
+                        <div class="feature-icon">🚚</div>
+                        <div>
+                            <div class="feature-title">Same-Day</div>
+                            <div class="feature-subtitle">Delivery</div>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🔒</div>
+                        <div>
+                            <div class="feature-title">100% Secure</div>
+                            <div class="feature-subtitle">Escrow</div>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">📍</div>
+                        <div>
+                            <div class="feature-title">Lagos Wide</div>
+                            <div class="feature-subtitle">Coverage</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Banner Section -->
+    <section class="banner">
+        <div class="container">
+            <h2 class="banner-title">Fresh Nigerian Market Produce</h2>
+            <div class="banner-product">
+                <img src="https://images.unsplash.com/photo-1546470427-e26264be0b0d?w=400" alt="Fresh Tomatoes" class="banner-img">
+                <div class="banner-info">
+                    <h3>Fresh Tomatoes</h3>
+                    <p class="price">₦800/kg</p>
+                    <button class="btn-primary">Add</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section id="categories" class="categories">
+        <div class="container">
+            <h2 class="section-title">Shop by Category</h2>
+            <div class="category-grid">
+                <div class="category-card">
+                    <div class="category-icon">🥬</div>
+                    <h3>Vegetables</h3>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon">🌾</div>
+                    <h3>Grains</h3>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon">🥩</div>
+                    <h3>Meat</h3>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon">🍎</div>
+                    <h3>Fruits</h3>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon">🥛</div>
+                    <h3>Dairy</h3>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon">🐟</div>
+                    <h3>Fish</h3>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon">🍿</div>
+                    <h3>Snacks</h3>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon">🛒</div>
+                    <h3>Fresh Mix</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products Section -->
+    <section id="shop" class="products">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Featured Products</h2>
+                <a href="#" class="view-all">View All</a>
+            </div>
+            <div class="product-grid">
+                <div class="product-card">
+                    <span class="product-badge fresh">Fresh</span>
+                    <img src="https://images.unsplash.com/photo-1546470427-e26264be0b0d?w=300" alt="Fresh Tomatoes">
+                    <div class="product-info">
+                        <h3>Fresh Tomatoes</h3>
+                        <p class="product-price">₦800 <span class="unit">per kg</span></p>
+                        <button class="btn-add-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <span class="product-badge fresh">Fresh</span>
+                    <img src="https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=300" alt="Red Onions">
+                    <div class="product-info">
+                        <h3>Red Onions</h3>
+                        <p class="product-price">₦600 <span class="unit">per kg</span></p>
+                        <button class="btn-add-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <span class="product-badge discount">-15%</span>
+                    <span class="product-badge fresh">Fresh</span>
+                    <img src="https://images.unsplash.com/photo-1563565375-f3fdfdbefa83?w=300" alt="Yellow Pepper">
+                    <div class="product-info">
+                        <h3>Yellow Pepper</h3>
+                        <p class="product-price">₦1,200 <span class="unit">per kg</span></p>
+                        <button class="btn-add-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1586201375761-83865001e31c?w=300" alt="White Rice">
+                    <div class="product-info">
+                        <h3>White Rice (Local)</h3>
+                        <p class="product-price">₦2,500 <span class="unit">per 5kg</span></p>
+                        <button class="btn-add-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <span class="product-badge fresh">Fresh</span>
+                    <img src="https://images.unsplash.com/photo-1563565375-f3fdfdbefa83?w=300" alt="Red Bell Pepper">
+                    <div class="product-info">
+                        <h3>Red Bell Pepper</h3>
+                        <p class="product-price">₦1,500 <span class="unit">per kg</span></p>
+                        <button class="btn-add-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="https://images.unsplash.com/photo-1589927986089-35812388d1f4?w=300" alt="Fresh Beans">
+                    <div class="product-info">
+                        <h3>Fresh Beans</h3>
+                        <p class="product-price">₦1,800 <span class="unit">per kg</span></p>
+                        <button class="btn-add-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <span class="product-badge discount">-10%</span>
+                    <span class="product-badge fresh">Fresh</span>
+                    <img src="https://images.unsplash.com/photo-1540420773420-3366772f4999?w=300" alt="Green Vegetables">
+                    <div class="product-info">
+                        <h3>Green Vegetables</h3>
+                        <p class="product-price">₦500 <span class="unit">per bundle</span></p>
+                        <button class="btn-add-cart">Add to Cart</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <span class="product-badge fresh">Fresh</span>
+                    <img src="https://images.unsplash.com/photo-1587132117160-a9f8c1df0be8?w=300" alt="Sweet Plantain">
+                    <div class="product-info">
+                        <h3>Sweet Plantain</h3>
+                        <p class="product-price">₦300 <span class="unit">per piece</span></p>
+                        <button class="btn-add-cart">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Business Model Section -->
+    <section class="business-model">
+        <div class="container">
+            <h2 class="section-title">Our Business Model</h2>
+            <p class="section-subtitle">Multiple Revenue Streams</p>
+            <p class="section-description">Building a sustainable marketplace through diversified revenue channels that benefit all stakeholders</p>
+            
+            <div class="revenue-grid">
+                <div class="revenue-card">
+                    <h3>Seller Commission</h3>
+                    <p class="revenue-description">Platform listing fee</p>
+                    <p class="revenue-value">5%</p>
+                </div>
+                <div class="revenue-card">
+                    <h3>Buyer Escrow Fee</h3>
+                    <p class="revenue-description">Secure payment processing</p>
+                    <p class="revenue-value">₦500</p>
+                    <p class="revenue-note">Per transaction</p>
+                </div>
+                <div class="revenue-card">
+                    <h3>Market Procurement</h3>
+                    <p class="revenue-description">Based on shopping amount</p>
+                    <p class="revenue-value">₦1,500 - ₦5,000</p>
+                </div>
+                <div class="revenue-card">
+                    <h3>Rider Platform Fee</h3>
+                    <p class="revenue-description">Per delivery commission</p>
+                    <p class="revenue-value">10%</p>
+                </div>
+                <div class="revenue-card">
+                    <h3>Market Seller Charges</h3>
+                    <p class="revenue-description">Transaction fee from sellers</p>
+                    <p class="revenue-value">4%</p>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">5+</div>
+                    <div class="stat-label">Revenue Channels</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">100%</div>
+                    <div class="stat-label">Secure</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">1000+</div>
+                    <div class="stat-label">Sellers</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">24/7</div>
+                    <div class="stat-label">Support</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Team Section -->
+    <section class="our-team">
+        <div class="container">
+            <h2 class="section-title">Meet Our Team</h2>
+            <p class="section-subtitle">Dedicated professionals working to bring fresh produce to your doorstep</p>
+            
+            <div class="team-grid">
+                <div class="team-card">
+                    <img src="https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=400&h=300&fit=crop" alt="Agent in Local Market">
+                    <div class="team-info">
+                        <h3>Our Market Agents</h3>
+                        <p>Shopping at local Nigerian markets for the freshest produce</p>
+                    </div>
+                </div>
+                
+                <div class="team-card">
+                    <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=400&h=300&fit=crop" alt="Customer Service">
+                    <div class="team-info">
+                        <h3>Customer Service</h3>
+                        <p>Our office team confirming orders and ensuring customer satisfaction</p>
+                    </div>
+                </div>
+                
+                <div class="team-card">
+                    <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop" alt="Delivery Rider on Bike">
+                    <div class="team-info">
+                        <h3>Trusted Riders</h3>
+                        <p>Fast delivery on bikes across Lagos neighborhoods</p>
+                    </div>
+                </div>
+                
+                <div class="team-card">
+                    <img src="https://images.unsplash.com/photo-1609137144813-7d9921338f24?w=400&h=300&fit=crop" alt="Happy Customer">
+                    <div class="team-info">
+                        <h3>Happy Customers</h3>
+                        <p>Satisfied customers receiving fresh market produce</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">How It Works</h2>
+            <p class="section-subtitle">From market to doorstep in 4 simple steps</p>
+            
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">01</div>
+                    <h3>Browse Products</h3>
+                    <p>Search for fresh produce, grains, and groceries from verified rural market sellers</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">02</div>
+                    <h3>Add to Cart</h3>
+                    <p>Select your items and quantities. See real-time pricing from trusted sellers</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">03</div>
+                    <h3>Secure Payment</h3>
+                    <p>Pay safely with escrow protection. Your money is held until delivery confirmation</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">04</div>
+                    <h3>Fast Delivery</h3>
+                    <p>Get your fresh market goods delivered same-day by our verified riders</p>
+                </div>
+            </div>
+
+            <div class="cta-center">
+                <button class="btn-primary btn-large">Start Shopping Now</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <div class="container">
+            <h2 class="section-title">What Our Users Say</h2>
+            <p class="section-subtitle">Join thousands of satisfied buyers and sellers across Nigeria</p>
+            
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"NaijaMall has changed how I shop for groceries. Fresh produce from the village market delivered to my door in Lagos. The escrow payment gives me peace of mind!"</p>
+                    <div class="testimonial-author">
+                        <img src="https://ui-avatars.com/api/?name=Amaka+Johnson&background=22c55e&color=fff" alt="Amaka Johnson">
+                        <div>
+                            <h4>Amaka Johnson</h4>
+                            <p>Regular Customer • Lekki, Lagos</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"As a rural market seller, NaijaMall connected me with thousands of urban buyers. My income has tripled in 6 months. The platform is easy to use and payments are secure."</p>
+                    <div class="testimonial-author">
+                        <img src="https://ui-avatars.com/api/?name=Chidi+Okonkwo&background=22c55e&color=fff" alt="Chidi Okonkwo">
+                        <div>
+                            <h4>Chidi Okonkwo</h4>
+                            <p>Market Seller • Owerri Market</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"I run a restaurant and NaijaMall is my go-to for fresh ingredients. Competitive prices, same-day delivery, and quality produce. Highly recommended!"</p>
+                    <div class="testimonial-author">
+                        <img src="https://ui-avatars.com/api/?name=Fatima+Bello&background=22c55e&color=fff" alt="Fatima Bello">
+                        <div>
+                            <h4>Fatima Bello</h4>
+                            <p>Small Business Owner • Victoria Island, Lagos</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="faq">
+        <div class="container">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <p class="section-subtitle">Everything you need to know about NaijaMall</p>
+            
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How does the escrow payment system work?</h3>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Our escrow system protects both buyers and sellers. When you make a purchase, your payment is securely held by NaijaMall. The funds are only released to the seller after you confirm receipt and satisfaction with your order. The escrow fee is ₦500 per transaction.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>What areas do you deliver to?</h3>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We currently provide same-day delivery service across Lagos State, including areas like Lekki, Victoria Island, Ikeja, Surulere, and more. We're constantly expanding to new locations.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>What is the market procurement fee?</h3>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>The market procurement fee ranges from ₦1,500 to ₦5,000 depending on your shopping amount. This covers the cost of our agents shopping on your behalf at the rural markets.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How long does delivery take?</h3>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We offer same-day delivery for orders placed before 12 PM. Orders placed after 5PM will be delivered the next business day. You'll receive real-time tracking updates from our verified riders.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How do I become a seller on NaijaMall?</h3>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Click on "Become a Seller" and fill out the registration form. You'll need to provide your business details, valid ID, and bank information. Our team will verify your details within 24-48 hours. Sellers pay a 5% commission on sales from our platform.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>What payment methods do you accept?</h3>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We accept all major payment methods including bank transfers, debit cards, USSD, and mobile money. All payments are processed securely through our escrow system.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Can I return products if I'm not satisfied?</h3>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! If you're not satisfied with your order, please complain within 30mins of item delivery. Since your payment is held in escrow, you won't be charged until you confirm satisfaction.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How fresh are the products?</h3>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>All our products come directly from rural markets and farms, ensuring maximum freshness. Items are procured on the same day or day before delivery to guarantee quality.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>What are the fees for riders?</h3>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Riders earn competitive rates with a 10% platform fee per delivery. Join our rider network to start earning today!</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How can I track my order?</h3>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Once your order is confirmed, you'll receive real-time tracking updates via SMS and email. You can also track your order directly on the website using your order number.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- For Sellers Section -->
+    <section id="sellers" class="for-sellers">
+        <div class="container">
+            <h2 class="section-title">Join Our Marketplace</h2>
+            <p class="section-subtitle">Expand your reach and grow your business with NaijaMall</p>
+            
+            <div class="seller-benefits">
+                <div class="benefit-card">
+                    <div class="benefit-icon">📱</div>
+                    <h3>Easy to Use Platform</h3>
+                    <p>Simple interface designed for market sellers</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">💰</div>
+                    <h3>Secure Payments</h3>
+                    <p>Get paid quickly with our escrow system</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">🚀</div>
+                    <h3>Grow Your Business</h3>
+                    <p>Access thousands of buyers across Nigeria</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">📊</div>
+                    <h3>Track Your Sales</h3>
+                    <p>Real-time analytics and reporting</p>
+                </div>
+            </div>
+
+            <div class="cta-center">
+                <button class="btn-primary btn-large">Become a Seller Today</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>NaijaMall</h3>
+                    <p>Connecting rural market sellers with urban buyers across Nigeria. Fresh produce delivered with secure escrow payments.</p>
+                </div>
+                <div class="footer-column">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#shop">Shop</a></li>
+                        <li><a href="#categories">Categories</a></li>
+                        <li><a href="#how-it-works">How It Works</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>For Business</h4>
+                    <ul>
+                        <li><a href="#sellers">Become a Seller</a></li>
+                        <li><a href="#sellers">Join as Rider</a></li>
+                        <li><a href="#sellers">Partner With Us</a></li>
+                        <li><a href="#sellers">Wholesale</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Contact Us</h4>
+                    <ul>
+                        <li>📞 <a href="tel:+2348137790780">+2348137790780</a></li>
+                        <li>📧 <a href="mailto:naijamall.contact@gmail.com">naijamall.contact@gmail.com</a></li>
+                        <li>📍 Lagos, Nigeria</li>
+                    </ul>
+                    <div class="social-links">
+                        <a href="#" class="social-icon">📘</a>
+                        <a href="#" class="social-icon">📷</a>
+                        <a href="#" class="social-icon">🐦</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 NaijaMall. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

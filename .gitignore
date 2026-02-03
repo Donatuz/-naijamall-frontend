@@ -1,0 +1,21 @@
+# Node
+node_modules/
+npm-debug.log
+package-lock.json
+
+# Server files (not needed for deployment)
+server.js
+
+# Temp files
+tmp_*
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo

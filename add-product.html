@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product - NaijaMall Seller</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles-extended.css">
+    <style>
+        .add-product-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            color: #28a745;
+        }
+
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section h3 {
+            margin: 0 0 20px 0;
+            color: #333;
+            border-bottom: 2px solid #28a745;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .image-upload-section {
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .image-upload-section:hover {
+            border-color: #28a745;
+            background: #e8f5e9;
+        }
+
+        .image-upload-section.dragover {
+            border-color: #28a745;
+            background: #c8e6c9;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .image-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .image-preview-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #ddd;
+            aspect-ratio: 1;
+        }
+
+        .image-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-preview-item .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+
+        .help-text {
+            font-size: 13px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .required {
+            color: #dc3545;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .form-actions button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <span class="logo-icon">🛒</span>
+                <span class="logo-text">NaijaMall</span>
+            </a>
+            <div class="nav-menu">
+                <a href="seller-dashboard.html" class="nav-link">Dashboard</a>
+                <a href="add-product.html" class="nav-link active">Add Product</a>
+                <a href="#" class="nav-link" id="logoutBtn">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Add Product Container -->
+    <div class="add-product-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 id="pageTitle">📦 Add New Product</h1>
+        </div>
+
+        <!-- Product Form -->
+        <div class="form-container">
+            <form id="productForm" onsubmit="handleSubmit(event)">
+                <!-- Basic Information -->
+                <div class="form-section">
+                    <h3>Basic Information</h3>
+                    <div class="form-group">
+                        <label for="productName">Product Name <span class="required">*</span></label>
+                        <input type="text" id="productName" name="name" required 
+                               placeholder="e.g., Fresh Tomatoes">
+                        <div class="help-text">Choose a clear, descriptive name for your product</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productDescription">Description <span class="required">*</span></label>
+                        <textarea id="productDescription" name="description" required 
+                                  placeholder="Describe your product, its quality, origin, etc."></textarea>
+                        <div class="help-text">Provide detailed information about your product</div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="productCategory">Category <span class="required">*</span></label>
+                            <select id="productCategory" name="category" required>
+                                <option value="">Select a category</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productTags">Tags (comma-separated)</label>
+                            <input type="text" id="productTags" name="tags" 
+                                   placeholder="e.g., fresh, organic, local">
+                            <div class="help-text">Add tags to help buyers find your product</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pricing & Stock -->
+                <div class="form-section">
+                    <h3>Pricing & Stock</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="productPrice">Price (₦) <span class="required">*</span></label>
+                            <input type="number" id="productPrice" name="price" required min="0" step="0.01"
+                                   placeholder="0.00">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productUnit">Unit <span class="required">*</span></label>
+                            <select id="productUnit" name="unit" required>
+                                <option value="">Select unit</option>
+                                <option value="kg">Kilogram (kg)</option>
+                                <option value="g">Gram (g)</option>
+                                <option value="piece">Piece</option>
+                                <option value="bundle">Bundle</option>
+                                <option value="bag">Bag</option>
+                                <option value="liter">Liter</option>
+                                <option value="ml">Milliliter (ml)</option>
+                                <option value="dozen">Dozen</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="productStock">Stock Quantity <span class="required">*</span></label>
+                            <input type="number" id="productStock" name="stock" required min="0"
+                                   placeholder="0">
+                            <div class="help-text">How many units do you have in stock?</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productDiscount">Discount (%)</label>
+                            <input type="number" id="productDiscount" name="discount" min="0" max="100" value="0"
+                                   placeholder="0">
+                            <div class="help-text">Optional discount percentage</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Details -->
+                <div class="form-section">
+                    <h3>Product Details</h3>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="productIsFresh" name="isFresh" checked>
+                            This is a fresh product
+                        </label>
+                        <div class="help-text">Check if this is a fresh/perishable product</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="marketLocation">Market Location</label>
+                        <input type="text" id="marketLocation" name="marketLocation" 
+                               placeholder="e.g., Mile 12 Market, Lagos">
+                        <div class="help-text">Where buyers can find this product</div>
+                    </div>
+                </div>
+
+                <!-- Product Images -->
+                <div class="form-section">
+                    <h3>Product Images</h3>
+                    <div class="image-upload-section" id="imageUploadArea" onclick="document.getElementById('imageInput').click()">
+                        <div class="upload-icon">📸</div>
+                        <h4>Click or drag images here to upload</h4>
+                        <p>Upload up to 5 images (JPG, PNG, max 5MB each)</p>
+                        <input type="file" id="imageInput" accept="image/*" multiple hidden onchange="handleImageSelect(event)">
+                    </div>
+                    <div id="imagePreviewGrid" class="image-preview-grid"></div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='seller-dashboard.html'">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <span id="submitBtnText">Add Product</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notification-container"></div>
+
+    <script type="module" src="api-service.js"></script>
+    <script type="module" src="add-product.js"></script>
+</body>
+</html>

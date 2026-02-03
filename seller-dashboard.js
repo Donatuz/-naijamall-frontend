@@ -1,0 +1,225 @@
+// Seller Dashboard Logic
+import { AuthService, ProductService } from './api-service.js';
+
+// Check authentication on page load
+document.addEventListener('DOMContentLoaded', async () => {
+    await checkSellerAuth();
+    await loadDashboardData();
+});
+
+// Check if user is authenticated and is a seller
+async function checkSellerAuth() {
+    const token = localStorage.getItem('authToken');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+    if (!token || !user.id) {
+        window.location.href = 'index.html';
+        return;
+    }
+
+    if (user.role !== 'seller') {
+        showNotification('Access denied. Seller account required.', 'error');
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 2000);
+        return;
+    }
+
+    // Display seller info
+    document.getElementById('sellerName').textContent = user.firstName || 'Seller';
+    if (user.businessName) {
+        document.getElementById('businessName').textContent = user.businessName;
+    }
+
+    // Display verification status
+    const verificationStatus = document.getElementById('verificationStatus');
+    const status = user.verificationStatus || 'pending';
+    let badgeClass = 'pending';
+    let statusText = 'Verification Pending';
+
+    if (status === 'verified') {
+        badgeClass = 'verified';
+        statusText = '✓ Verified Seller';
+    } else if (status === 'rejected') {
+        badgeClass = 'rejected';
+        statusText = 'Verification Rejected';
+    }
+
+    verificationStatus.innerHTML = `<span class="verification-badge ${badgeClass}">${statusText}</span>`;
+
+    // Show warning if not verified
+    if (status !== 'verified') {
+        showNotification('Your account is pending verification. You can add products but they won\'t be visible to buyers until verified.', 'warning');
+    }
+}
+
+// Load dashboard data
+async function loadDashboardData() {
+    try {
+        await loadProducts();
+        // TODO: Load other stats like orders, sales, etc.
+    } catch (error) {
+        console.error('Error loading dashboard data:', error);
+        showNotification('Error loading dashboard data', 'error');
+    }
+}
+
+// Load seller's products
+async function loadProducts() {
+    const productsContainer = document.getElementById('productsContainer');
+    
+    try {
+        const response = await ProductService.getMyProducts();
+        
+        if (response.success && response.data) {
+            const products = response.data;
+            
+            // Update stats
+            document.getElementById('totalProducts').textContent = products.length;
+            const activeCount = products.filter(p => p.isAvailable).length;
+            document.getElementById('activeProducts').textContent = activeCount;
+
+            if (products.length === 0) {
+                productsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📦</div>
+                        <h3>No Products Yet</h3>
+                        <p>Start by adding your first product to your store!</p>
+                        <button class="btn btn-primary" onclick="showAddProductModal()">Add Product</button>
+                    </div>
+                `;
+            } else {
+                productsContainer.innerHTML = '<div class="products-grid"></div>';
+                const grid = productsContainer.querySelector('.products-grid');
+                
+                products.forEach(product => {
+                    grid.appendChild(createProductCard(product));
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Error loading products:', error);
+        productsContainer.innerHTML = `
+            <div class="empty-state">
+                <p style="color: #dc3545;">Error loading products. Please try again.</p>
+                <button class="btn btn-secondary" onclick="window.location.reload()">Retry</button>
+            </div>
+        `;
+    }
+}
+
+// Create product card element
+function createProductCard(product) {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    
+    const imageUrl = product.images && product.images.length > 0 
+        ? product.images[0].url 
+        : 'https://via.placeholder.com/280x200?text=No+Image';
+    
+    const stockStatus = product.stock > 0 ? `${product.stock} in stock` : 'Out of stock';
+    const availabilityClass = product.isAvailable ? 'text-success' : 'text-danger';
+    const availabilityText = product.isAvailable ? 'Active' : 'Inactive';
+    
+    card.innerHTML = `
+        <img src="${imageUrl}" alt="${product.name}" class="product-image" onerror="this.src='https://via.placeholder.com/280x200?text=No+Image'">
+        <div class="product-info">
+            <div class="product-name">${product.name}</div>
+            <div class="product-price">₦${product.price.toLocaleString()} / ${product.unit}</div>
+            <div class="product-stock">${stockStatus} • <span class="${availabilityClass}">${availabilityText}</span></div>
+            <div class="product-actions">
+                <button class="btn-edit" onclick="editProduct('${product._id}')">Edit</button>
+                <button class="btn-toggle" onclick="toggleProductAvailability('${product._id}', ${product.isAvailable})">
+                    ${product.isAvailable ? 'Disable' : 'Enable'}
+                </button>
+                <button class="btn-delete" onclick="deleteProduct('${product._id}', '${product.name}')">Delete</button>
+            </div>
+        </div>
+    `;
+    
+    return card;
+}
+
+// Show add product modal
+window.showAddProductModal = () => {
+    // Check verification status
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (user.verificationStatus !== 'verified') {
+        showNotification('Your account must be verified before adding products. Contact admin for verification.', 'warning');
+        return;
+    }
+    
+    window.location.href = 'add-product.html';
+};
+
+// Edit product
+window.editProduct = (productId) => {
+    window.location.href = `add-product.html?id=${productId}`;
+};
+
+// Toggle product availability
+window.toggleProductAvailability = async (productId, currentStatus) => {
+    try {
+        const response = await ProductService.toggleAvailability(productId);
+        
+        if (response.success) {
+            showNotification(response.message, 'success');
+            await loadProducts();
+        } else {
+            showNotification(response.message || 'Failed to update product', 'error');
+        }
+    } catch (error) {
+        console.error('Error toggling product:', error);
+        showNotification('Error updating product status', 'error');
+    }
+};
+
+// Delete product
+window.deleteProduct = async (productId, productName) => {
+    if (!confirm(`Are you sure you want to delete "${productName}"? This action cannot be undone.`)) {
+        return;
+    }
+    
+    try {
+        const response = await ProductService.deleteProduct(productId);
+        
+        if (response.success) {
+            showNotification('Product deleted successfully', 'success');
+            await loadProducts();
+        } else {
+            showNotification(response.message || 'Failed to delete product', 'error');
+        }
+    } catch (error) {
+        console.error('Error deleting product:', error);
+        showNotification('Error deleting product', 'error');
+    }
+};
+
+// Logout
+document.getElementById('logoutBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
+        window.location.href = 'index.html';
+    }
+});
+
+// Notification system
+function showNotification(message, type = 'info') {
+    const container = document.getElementById('notification-container');
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <span>${message}</span>
+        <button onclick="this.parentElement.remove()">&times;</button>
+    `;
+    
+    container.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 5000);
+}
+
+window.showNotification = showNotification;
