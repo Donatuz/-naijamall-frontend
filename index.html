@@ -858,9 +858,16 @@
 
     <script src="script.js"></script>
     <script src="registration-forms.js"></script>
-    <script type="module" src="api-config.js"></script>
-    <script type="module" src="api-service.js"></script>
-    <script type="module" src="auth-modals.js"></script>
-    <script type="module" src="app.js"></script>
+    <script type="module">
+        // Ensure modules load and functions are available
+        import { showLoginModal, showRegisterModal } from './auth-modals.js';
+        import './app.js';
+        
+        // Expose to global scope for onclick handlers
+        window.showLoginModal = showLoginModal;
+        window.showRegisterModal = showRegisterModal;
+        
+        console.log('✅ NaijaMall modules loaded');
+    </script>
 </body>
 </html>

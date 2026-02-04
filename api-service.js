@@ -50,7 +50,12 @@ const AuthService = {
             body: JSON.stringify(userData)
         });
         
-        if (data.token) {
+        // Backend returns data wrapped in 'data' property
+        if (data.data && data.data.token) {
+            localStorage.setItem(STORAGE_KEYS.TOKEN, data.data.token);
+            localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(data.data.user));
+        } else if (data.token) {
+            // Fallback for direct token response
             localStorage.setItem(STORAGE_KEYS.TOKEN, data.token);
             localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(data.user));
         }
@@ -65,7 +70,12 @@ const AuthService = {
             body: JSON.stringify(credentials)
         });
         
-        if (data.token) {
+        // Backend returns data wrapped in 'data' property
+        if (data.data && data.data.token) {
+            localStorage.setItem(STORAGE_KEYS.TOKEN, data.data.token);
+            localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(data.data.user));
+        } else if (data.token) {
+            // Fallback for direct token response
             localStorage.setItem(STORAGE_KEYS.TOKEN, data.token);
             localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(data.user));
         }
