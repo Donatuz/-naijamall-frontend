@@ -302,6 +302,15 @@ const updateUIForAuthenticatedUser = () => {
 };
 
 // Handle Login
+// Show admin dashboard
+const showAdminDashboard = () => {
+    if (AppState.user && AppState.user.role === 'admin') {
+        window.location.href = 'admin-dashboard.html';
+    } else {
+        showNotification('Access denied. Admin privileges required.', 'error');
+    }
+};
+
 window.handleLogin = async (email, password) => {
     try {
         showLoader();
@@ -502,6 +511,8 @@ window.openModal = (modalId) => {
     const modal = document.querySelector(`#${modalId}`);
     if (modal) modal.style.display = 'flex';
 };
+
+window.showAdminDashboard = showAdminDashboard;
 
 window.closeModal = (modalId) => {
     const modal = document.querySelector(`#${modalId}`);

@@ -387,18 +387,52 @@ const CartService = {
 // Admin Service
 const AdminService = {
     // Get dashboard stats
-    getStats: async () => {
-        return await apiRequest(API_ENDPOINTS.ADMIN.STATS);
+    getDashboardStats: async () => {
+        return await apiRequest('/admin/dashboard');
     },
 
     // Get all users
-    getAllUsers: async () => {
-        return await apiRequest(API_ENDPOINTS.ADMIN.ALL_USERS);
+    getAllUsers: async (role = '', search = '', page = 1) => {
+        const params = new URLSearchParams();
+        if (role) params.append('role', role);
+        if (search) params.append('search', search);
+        params.append('page', page);
+        
+        return await apiRequest(`/admin/users?${params.toString()}`);
     },
 
-    // Get all orders
-    getAllOrders: async () => {
-        return await apiRequest(API_ENDPOINTS.ADMIN.ALL_ORDERS);
+    // Get all orders (admin view)
+    getAllOrders: async (status = '', page = 1) => {
+        const params = new URLSearchParams();
+        if (status) params.append('status', status);
+        params.append('page', page);
+        
+        return await apiRequest(`/admin/orders?${params.toString()}`);
+    },
+
+    // Update user status
+    updateUserStatus: async (userId, isActive) => {
+        return await apiRequest(`/admin/users/${userId}/status`, {
+            method: 'PATCH',
+            body: JSON.stringify({ isActive })
+        });
+    },
+
+    // Verify seller
+    verifySeller: async (sellerId, status) => {
+        return await apiRequest(`/admin/sellers/${sellerId}/verify`, {
+            method: 'POST',
+            body: JSON.stringify({ status })
+        });
+    },
+
+    // Get revenue report
+    getRevenueReport: async (startDate = null, endDate = null) => {
+        const params = new URLSearchParams();
+        if (startDate) params.append('startDate', startDate);
+        if (endDate) params.append('endDate', endDate);
+        
+        return await apiRequest(`/admin/revenue?${params.toString()}`);
     },
 
     // Get all products
