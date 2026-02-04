@@ -28,6 +28,52 @@ const elements = {
     userProfile: document.querySelector('#userProfile')
 };
 
+// Utility Functions (defined early so they can be used throughout)
+const showLoader = () => {
+    AppState.isLoading = true;
+    let loader = document.querySelector('#appLoader');
+    if (!loader) {
+        loader = document.createElement('div');
+        loader.id = 'appLoader';
+        loader.className = 'app-loader';
+        loader.innerHTML = '<div class="spinner"></div>';
+        document.body.appendChild(loader);
+    }
+    loader.style.display = 'flex';
+};
+
+const hideLoader = () => {
+    AppState.isLoading = false;
+    const loader = document.querySelector('#appLoader');
+    if (loader) {
+        loader.style.display = 'none';
+    }
+};
+
+const showNotification = (message, type = 'info') => {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+        <span>${message}</span>
+    `;
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 100);
+
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+};
+
+// Expose utility functions to window
+window.showLoader = showLoader;
+window.hideLoader = hideLoader;
+window.showNotification = showNotification;
+
 // Initialize Application
 const initApp = async () => {
     try {
@@ -450,53 +496,7 @@ window.proceedToCheckout = async () => {
     }
 };
 
-// Utility Functions
-const showLoader = () => {
-    AppState.isLoading = true;
-    let loader = document.querySelector('#appLoader');
-    if (!loader) {
-        loader = document.createElement('div');
-        loader.id = 'appLoader';
-        loader.className = 'app-loader';
-        loader.innerHTML = '<div class="spinner"></div>';
-        document.body.appendChild(loader);
-    }
-    loader.style.display = 'flex';
-};
-
-const hideLoader = () => {
-    AppState.isLoading = false;
-    const loader = document.querySelector('#appLoader');
-    if (loader) {
-        loader.style.display = 'none';
-    }
-};
-
-// Expose utility functions to window
-window.showLoader = showLoader;
-window.hideLoader = hideLoader;
-
-const showNotification = (message, type = 'info') => {
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.innerHTML = `
-        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
-        <span>${message}</span>
-    `;
-    document.body.appendChild(notification);
-
-    setTimeout(() => {
-        notification.classList.add('show');
-    }, 100);
-
-    setTimeout(() => {
-        notification.classList.remove('show');
-        setTimeout(() => notification.remove(), 300);
-    }, 3000);
-};
-
-// Expose showNotification to window for use in other modules
-window.showNotification = showNotification;
+// Modal utility functions
 
 window.openModal = (modalId) => {
     const modal = document.querySelector(`#${modalId}`);
