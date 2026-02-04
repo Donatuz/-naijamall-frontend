@@ -227,6 +227,120 @@
             color: #ddd;
             margin-bottom: 20px;
         }
+
+        /* Role Management Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 20px;
+            color: #1a1a1a;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #666;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+        }
+
+        .close-btn:hover {
+            color: #ef4444;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-footer {
+            padding: 20px 25px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #22c55e;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #16a34a;
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+
+        /* Role badge styles for all roles */
+        .status-badge.buyer { background: #dbeafe; color: #1e40af; }
+        .status-badge.rider { background: #fef3c7; color: #92400e; }
+        .status-badge.seller { background: #e0e7ff; color: #3730a3; }
+        .status-badge.agent { background: #fce7f3; color: #9f1239; }
+        .status-badge.customer_service { background: #d1fae5; color: #065f46; }
+        .status-badge.admin { background: #fef08a; color: #854d0e; }
+        .status-badge.super_admin { background: #c7d2fe; color: #3730a3; font-weight: 700; }
     </style>
 </head>
 <body>
@@ -314,8 +428,12 @@
                     <select id="userRoleFilter" onchange="loadUsers()">
                         <option value="">All Roles</option>
                         <option value="buyer">Buyers</option>
-                        <option value="seller">Sellers</option>
                         <option value="rider">Riders</option>
+                        <option value="seller">Sellers</option>
+                        <option value="agent">Agents</option>
+                        <option value="customer_service">Customer Service</option>
+                        <option value="admin">Admins</option>
+                        <option value="super_admin">Super Admins</option>
                     </select>
                     <input type="text" id="userSearchInput" placeholder="Search by name or email..." onkeyup="debounceSearch()">
                     <button class="action-btn view" onclick="loadUsers()">

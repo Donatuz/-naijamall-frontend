@@ -453,6 +453,19 @@ const AdminService = {
         return await apiRequest(API_ENDPOINTS.ADMIN.DELETE_USER(id), {
             method: 'DELETE'
         });
+    },
+
+    // Get available roles
+    getRoles: async () => {
+        return await apiRequest('/admin/roles');
+    },
+
+    // Update user role
+    updateUserRole: async (userId, role) => {
+        return await apiRequest(`/admin/users/${userId}/role`, {
+            method: 'PATCH',
+            body: JSON.stringify({ role })
+        });
     }
 };
 

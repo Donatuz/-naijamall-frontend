@@ -1,14 +1,21 @@
 import { AuthService, AdminService } from './api-service.js';
 
-// Check if user is admin
+// Check if user is admin or super admin
 const checkAdminAccess = () => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    if (!user || user.role !== 'admin') {
+    const adminRoles = ['admin', 'super_admin'];
+    if (!user || !adminRoles.includes(user.role)) {
         alert('Access denied. Admin privileges required.');
         window.location.href = 'index.html';
         return false;
     }
     return true;
+};
+
+// Check if current user is super admin
+const isSuperAdmin = () => {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    return user.role === 'super_admin';
 };
 
 // Initialize dashboard
@@ -187,6 +194,11 @@ window.loadUsers = async (page = 1) => {
                                 </td>
                                 <td>${new Date(user.createdAt).toLocaleDateString()}</td>
                                 <td>
+                                    ${isSuperAdmin() || (user.role !== 'super_admin' && user.role !== 'admin') ? `
+                                        <button class="action-btn view" onclick="showRoleModal('${user._id}', '${user.role}', '${user.firstName} ${user.lastName}')">
+                                            <i class="fas fa-user-tag"></i> Change Role
+                                        </button>
+                                    ` : ''}
                                     <button class="action-btn ${user.isActive ? 'cancelled' : 'assign'}" 
                                             onclick="toggleUserStatus('${user._id}', ${!user.isActive})"
                                             style="background: ${user.isActive ? '#ef4444' : '#22c55e'}">
@@ -358,6 +370,105 @@ window.debounceSearch = () => {
     searchTimeout = setTimeout(() => {
         loadUsers();
     }, 500);
+};
+
+// Show role change modal
+window.showRoleModal = async (userId, currentRole, userName) => {
+    try {
+        // Get available roles
+        const response = await AdminService.getRoles();
+        
+        if (!response.success) {
+            showNotification('Failed to load roles', 'error');
+            return;
+        }
+
+        const roles = response.data;
+        
+        // Create modal HTML
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+            <div class="modal-content" style="max-width: 500px;">
+                <div class="modal-header">
+                    <h2><i class="fas fa-user-tag"></i> Change User Role</h2>
+                    <button class="close-btn" onclick="closeRoleModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>User:</strong> ${userName}</p>
+                    <p><strong>Current Role:</strong> <span class="status-badge ${currentRole}">${currentRole}</span></p>
+                    <br>
+                    <label for="newRole"><strong>Select New Role:</strong></label>
+                    <select id="newRole" class="form-control" style="width: 100%; padding: 10px; margin-top: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                        ${roles.map(role => `
+                            <option value="${role.value}" ${role.value === currentRole ? 'selected' : ''}>
+                                ${role.label} - ${role.description}
+                            </option>
+                        `).join('')}
+                    </select>
+                    <br><br>
+                    <div style="background: #f0f9ff; padding: 15px; border-radius: 8px; border-left: 4px solid #3b82f6;">
+                        <p style="margin: 0; font-size: 14px;">
+                            <i class="fas fa-info-circle"></i> <strong>Role Hierarchy:</strong>
+                        </p>
+                        <ul style="margin: 10px 0 0 20px; font-size: 13px; line-height: 1.8;">
+                            <li><strong>Super Admin:</strong> Complete system control</li>
+                            <li><strong>Admin:</strong> Full admin access</li>
+                            <li><strong>Customer Service:</strong> Support staff</li>
+                            <li><strong>Agent:</strong> Sales agent</li>
+                            <li><strong>Seller:</strong> Merchant</li>
+                            <li><strong>Rider:</strong> Delivery personnel</li>
+                            <li><strong>Buyer:</strong> Regular customer</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeRoleModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="updateRole('${userId}')">
+                        <i class="fas fa-save"></i> Update Role
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+    } catch (error) {
+        console.error('Error showing role modal:', error);
+        showNotification('Error loading role options', 'error');
+    }
+};
+
+// Close role modal
+window.closeRoleModal = () => {
+    const modal = document.querySelector('.modal-overlay');
+    if (modal) {
+        modal.remove();
+    }
+};
+
+// Update user role
+window.updateRole = async (userId) => {
+    const newRole = document.getElementById('newRole').value;
+    
+    if (!newRole) {
+        showNotification('Please select a role', 'error');
+        return;
+    }
+    
+    try {
+        const response = await AdminService.updateUserRole(userId, newRole);
+        
+        if (response.success) {
+            showNotification(`User role updated successfully to ${newRole}`, 'success');
+            closeRoleModal();
+            loadUsers(); // Refresh users list
+        } else {
+            showNotification(response.message || 'Failed to update role', 'error');
+        }
+    } catch (error) {
+        console.error('Error updating role:', error);
+        showNotification(error.message || 'Error updating user role', 'error');
+    }
 };
 
 // Notification helper
