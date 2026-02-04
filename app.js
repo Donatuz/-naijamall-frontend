@@ -472,6 +472,10 @@ const hideLoader = () => {
     }
 };
 
+// Expose utility functions to window
+window.showLoader = showLoader;
+window.hideLoader = hideLoader;
+
 const showNotification = (message, type = 'info') => {
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
@@ -490,6 +494,9 @@ const showNotification = (message, type = 'info') => {
         setTimeout(() => notification.remove(), 300);
     }, 3000);
 };
+
+// Expose showNotification to window for use in other modules
+window.showNotification = showNotification;
 
 window.openModal = (modalId) => {
     const modal = document.querySelector(`#${modalId}`);
