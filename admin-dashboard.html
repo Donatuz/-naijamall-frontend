@@ -91,6 +91,8 @@
             gap: 10px;
             margin-bottom: 20px;
             border-bottom: 2px solid #f0f0f0;
+            flex-wrap: wrap;
+            overflow-x: auto;
         }
 
         .tab {
@@ -99,6 +101,7 @@
             border: none;
             cursor: pointer;
             font-size: 16px;
+            white-space: nowrap;
             color: #666;
             transition: all 0.3s;
             border-bottom: 3px solid transparent;
@@ -352,12 +355,18 @@
                     <h1><i class="fas fa-shield-alt"></i> Admin Dashboard</h1>
                     <p>Manage orders, users, and monitor platform activity</p>
                 </div>
-                <div style="display: flex; gap: 10px;">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                     <button onclick="window.location.href='index.html'" style="background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px;">
-                        <i class="fas fa-store"></i> View Store
+                        <i class="fas fa-store"></i> Store
                     </button>
                     <button onclick="window.location.href='customer-service-dashboard.html'" style="background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px;">
-                        <i class="fas fa-headset"></i> CS Dashboard
+                        <i class="fas fa-headset"></i> CS
+                    </button>
+                    <button onclick="window.location.href='agent-dashboard.html'" style="background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                        <i class="fas fa-shopping-basket"></i> Agent
+                    </button>
+                    <button onclick="window.location.href='seller-dashboard.html'" style="background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px;">
+                        <i class="fas fa-store-alt"></i> Seller
                     </button>
                     <button onclick="logout()" style="background: rgba(239, 68, 68, 0.8); border: none; color: white; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px;">
                         <i class="fas fa-sign-out-alt"></i> Logout
@@ -394,16 +403,16 @@
         <div class="dashboard-section">
             <div class="tabs">
                 <button class="tab active" onclick="switchTab('analytics')">
-                    <i class="fas fa-chart-bar"></i> Analytics & Charts
+                    <i class="fas fa-chart-bar"></i> Analytics
                 </button>
                 <button class="tab" onclick="switchTab('orders')">
-                    <i class="fas fa-shopping-cart"></i> Orders Management
+                    <i class="fas fa-shopping-cart"></i> Orders
                 </button>
                 <button class="tab" onclick="switchTab('users')">
-                    <i class="fas fa-users"></i> Users Management
+                    <i class="fas fa-users"></i> Users
                 </button>
                 <button class="tab" onclick="switchTab('sellers')">
-                    <i class="fas fa-store"></i> Seller Verification
+                    <i class="fas fa-store"></i> Sellers
                 </button>
             </div>
 
