@@ -466,6 +466,11 @@ const AdminService = {
             method: 'PATCH',
             body: JSON.stringify({ role })
         });
+    },
+
+    // Get analytics data
+    getAnalytics: async (period = '30days') => {
+        return await apiRequest(`/admin/analytics?period=${period}`);
     }
 };
 

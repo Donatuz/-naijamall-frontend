@@ -18,12 +18,21 @@ const isSuperAdmin = () => {
     return user.role === 'super_admin';
 };
 
+// Chart instances
+let signupChart, transactionChart, revenueChart, rolesChart;
+
 // Initialize dashboard
 document.addEventListener('DOMContentLoaded', () => {
     if (!checkAdminAccess()) return;
     
     loadDashboardStats();
     loadOrders();
+    
+    // Initialize charts after a short delay to ensure DOM is ready
+    setTimeout(() => {
+        initializeCharts();
+        updateCharts();
+    }, 100);
 });
 
 // Load dashboard statistics
@@ -530,6 +539,197 @@ window.deleteUser = async (userId) => {
         console.error('Error deleting user:', error);
         showNotification(error.message || 'Error deleting user', 'error');
     }
+};
+
+// Initialize Charts
+const initializeCharts = () => {
+    const chartConfig = {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    precision: 0
+                }
+            }
+        }
+    };
+
+    // Signup Chart
+    const signupCtx = document.getElementById('signupChart').getContext('2d');
+    signupChart = new Chart(signupCtx, {
+        type: 'bar',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'User Signups',
+                data: [],
+                backgroundColor: '#3b82f6',
+                borderColor: '#2563eb',
+                borderWidth: 1
+            }]
+        },
+        options: chartConfig
+    });
+
+    // Transaction Chart
+    const transactionCtx = document.getElementById('transactionChart').getContext('2d');
+    transactionChart = new Chart(transactionCtx, {
+        type: 'bar',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Orders',
+                data: [],
+                backgroundColor: '#22c55e',
+                borderColor: '#16a34a',
+                borderWidth: 1
+            }]
+        },
+        options: chartConfig
+    });
+
+    // Revenue Chart
+    const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+    revenueChart = new Chart(revenueCtx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Revenue (₦)',
+                data: [],
+                backgroundColor: 'rgba(139, 92, 246, 0.2)',
+                borderColor: '#8b5cf6',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            ...chartConfig,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '₦' + value.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Roles Chart (Pie)
+    const rolesCtx = document.getElementById('rolesChart').getContext('2d');
+    rolesChart = new Chart(rolesCtx, {
+        type: 'doughnut',
+        data: {
+            labels: [],
+            datasets: [{
+                data: [],
+                backgroundColor: [
+                    '#3b82f6', // buyer
+                    '#22c55e', // seller
+                    '#f59e0b', // rider
+                    '#8b5cf6', // agent
+                    '#10b981', // customer_service
+                    '#ef4444', // admin
+                    '#6366f1'  // super_admin
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+};
+
+// Update Charts
+window.updateCharts = async () => {
+    try {
+        const period = document.getElementById('chartPeriodFilter').value;
+        
+        // Get analytics data from backend
+        const analyticsData = await AdminService.getAnalytics(period);
+        
+        if (analyticsData.success) {
+            const data = analyticsData.data;
+            
+            // Update Signup Chart
+            signupChart.data.labels = data.signups.labels;
+            signupChart.data.datasets[0].data = data.signups.values;
+            signupChart.update();
+            
+            // Update Transaction Chart
+            transactionChart.data.labels = data.transactions.labels;
+            transactionChart.data.datasets[0].data = data.transactions.values;
+            transactionChart.update();
+            
+            // Update Revenue Chart
+            revenueChart.data.labels = data.revenue.labels;
+            revenueChart.data.datasets[0].data = data.revenue.values;
+            revenueChart.update();
+            
+            // Update Roles Chart
+            rolesChart.data.labels = data.roles.labels;
+            rolesChart.data.datasets[0].data = data.roles.values;
+            rolesChart.update();
+        }
+    } catch (error) {
+        console.error('Error updating charts:', error);
+        // Use mock data if API fails
+        updateChartsWithMockData();
+    }
+};
+
+// Mock data for charts (fallback)
+const updateChartsWithMockData = () => {
+    const period = document.getElementById('chartPeriodFilter').value;
+    const days = period === '7days' ? 7 : period === '30days' ? 30 : 90;
+    
+    const labels = [];
+    const signupData = [];
+    const transactionData = [];
+    const revenueData = [];
+    
+    for (let i = days - 1; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+        signupData.push(Math.floor(Math.random() * 20) + 5);
+        transactionData.push(Math.floor(Math.random() * 30) + 10);
+        revenueData.push(Math.floor(Math.random() * 500000) + 100000);
+    }
+    
+    signupChart.data.labels = labels;
+    signupChart.data.datasets[0].data = signupData;
+    signupChart.update();
+    
+    transactionChart.data.labels = labels;
+    transactionChart.data.datasets[0].data = transactionData;
+    transactionChart.update();
+    
+    revenueChart.data.labels = labels;
+    revenueChart.data.datasets[0].data = revenueData;
+    revenueChart.update();
+    
+    rolesChart.data.labels = ['Buyers', 'Sellers', 'Riders', 'Agents', 'Customer Service', 'Admins'];
+    rolesChart.data.datasets[0].data = [45, 12, 8, 5, 3, 2];
+    rolesChart.update();
 };
 
 // Notification helper

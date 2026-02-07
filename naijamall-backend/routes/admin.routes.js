@@ -11,6 +11,7 @@ const {
     updateUserRole,
     getRoles
 } = require('../controllers/admin.controller');
+const { getAnalytics } = require('../controllers/analytics.controller');
 const { protect, authorize, authorizeMinRole, isSuperAdmin } = require('../middleware/auth.middleware');
 
 // All routes require at least admin authorization
@@ -36,5 +37,8 @@ router.get('/orders', getAllOrders);
 
 // Revenue reports
 router.get('/revenue', getRevenueReport);
+
+// Analytics data for charts
+router.get('/analytics', getAnalytics);
 
 module.exports = router;
