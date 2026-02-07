@@ -60,6 +60,7 @@ const loadDashboardStats = async () => {
 // Switch between tabs
 window.switchTab = (tabName) => {
     // Hide all tabs
+    document.getElementById('analyticsTab').style.display = 'none';
     document.getElementById('ordersTab').style.display = 'none';
     document.getElementById('usersTab').style.display = 'none';
     document.getElementById('sellersTab').style.display = 'none';
@@ -67,18 +68,21 @@ window.switchTab = (tabName) => {
     // Remove active class from all tabs
     document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
     
-    // Show selected tab
-    if (tabName === 'orders') {
-        document.getElementById('ordersTab').style.display = 'block';
+    // Show selected tab and activate corresponding tab button
+    if (tabName === 'analytics') {
+        document.getElementById('analyticsTab').style.display = 'block';
         document.querySelectorAll('.tab')[0].classList.add('active');
+    } else if (tabName === 'orders') {
+        document.getElementById('ordersTab').style.display = 'block';
+        document.querySelectorAll('.tab')[1].classList.add('active');
         loadOrders();
     } else if (tabName === 'users') {
         document.getElementById('usersTab').style.display = 'block';
-        document.querySelectorAll('.tab')[1].classList.add('active');
+        document.querySelectorAll('.tab')[2].classList.add('active');
         loadUsers();
     } else if (tabName === 'sellers') {
         document.getElementById('sellersTab').style.display = 'block';
-        document.querySelectorAll('.tab')[2].classList.add('active');
+        document.querySelectorAll('.tab')[3].classList.add('active');
         loadPendingSellers();
     }
 };
