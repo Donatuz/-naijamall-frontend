@@ -292,7 +292,9 @@ const updateUIForAuthenticatedUser = () => {
                     <a href="#" onclick="showOrders()">My Orders</a>
                     ${AppState.user?.role === 'seller' ? '<a href="seller-dashboard.html">Seller Dashboard</a>' : ''}
                     ${AppState.user?.role === 'seller' ? '<a href="add-product.html">Add Product</a>' : ''}
-                    ${AppState.user?.role === 'admin' ? '<a href="#" onclick="showAdminDashboard()">Admin Dashboard</a>' : ''}
+                    ${AppState.user?.role === 'admin' || AppState.user?.role === 'super_admin' ? '<a href="admin-dashboard.html"><i class="fas fa-shield-alt"></i> Admin Dashboard</a>' : ''}
+                    ${AppState.user?.role === 'customer_service' ? '<a href="customer-service-dashboard.html"><i class="fas fa-headset"></i> CS Dashboard</a>' : ''}
+                    ${AppState.user?.role === 'agent' ? '<a href="agent-dashboard.html"><i class="fas fa-shopping-basket"></i> Agent Dashboard</a>' : ''}
                     <hr>
                     <a href="#" onclick="handleLogout()">Logout</a>
                 </div>
@@ -304,7 +306,7 @@ const updateUIForAuthenticatedUser = () => {
 // Handle Login
 // Show admin dashboard
 const showAdminDashboard = () => {
-    if (AppState.user && AppState.user.role === 'admin') {
+    if (AppState.user && (AppState.user.role === 'admin' || AppState.user.role === 'super_admin')) {
         window.location.href = 'admin-dashboard.html';
     } else {
         showNotification('Access denied. Admin privileges required.', 'error');
