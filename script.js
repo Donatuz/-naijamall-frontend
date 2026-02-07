@@ -259,9 +259,39 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
+            // Transform shopping items to match backend schema
+            const backendItems = shoppingItems.map(item => ({
+                name: item.description,
+                quantity: 1, // Default quantity
+                requestedPrice: item.estimatedPrice || 0,
+                notes: ''
+            }));
+
+            // Get delivery location details
+            const deliverySelect = document.getElementById('deliveryLocation');
+            const selectedOption = deliverySelect.options[deliverySelect.selectedIndex];
+            const deliveryLocationText = selectedOption.text;
+            
+            // Extract city from delivery location (e.g., "Ikeja - ₦1,500" -> "Ikeja")
+            const city = deliveryLocationText.split(' - ')[0];
+            
+            // Transform data to match backend schema
             const formData = {
+                items: backendItems,
+                shippingAddress: {
+                    street: '', // Not collected in current form
+                    city: city,
+                    state: 'Lagos',
+                    postalCode: '',
+                    phone: document.getElementById('phoneNumber').value
+                },
+                buyerNotes: `Preferred Market: ${document.getElementById('preferredMarket').value || 'Any Lagos market'}\nPayment Method: ${document.getElementById('paymentMethod').value}\nAdditional Notes: ${document.getElementById('additionalNotes').value || 'None'}\nEstimated Total: ${document.getElementById('totalPrice').textContent}`
+            };
+            
+            // Keep original format for localStorage backup
+            const localStorageData = {
                 items: shoppingItems,
-                deliveryLocation: document.getElementById('deliveryLocation').options[document.getElementById('deliveryLocation').selectedIndex].text,
+                deliveryLocation: deliveryLocationText,
                 preferredMarket: document.getElementById('preferredMarket').value,
                 phoneNumber: document.getElementById('phoneNumber').value,
                 paymentMethod: document.getElementById('paymentMethod').value,
@@ -312,10 +342,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Store in localStorage as backup
                 const existingLists = JSON.parse(localStorage.getItem('shoppingLists') || '[]');
-                existingLists.push(formData);
+                existingLists.push(localStorageData);
                 localStorage.setItem('shoppingLists', JSON.stringify(existingLists));
                 
-                console.log('Shopping list submitted:', formData);
+                console.log('Shopping list submitted:', result.data);
                 
             } catch (error) {
                 console.error('Error submitting shopping list:', error);
