@@ -19,15 +19,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // Check if user is authenticated and is a seller
 async function checkSellerAuth() {
-    const token = localStorage.getItem('authToken');
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const token = localStorage.getItem('naijamall_token') || localStorage.getItem('authToken');
+    const user = JSON.parse(localStorage.getItem('naijamall_user') || localStorage.getItem('user') || '{}');
 
     if (!token || !user.id) {
         window.location.href = 'index.html';
         return;
     }
 
-    if (user.role !== 'seller') {
+    // Allow admin and super_admin to view seller dashboard
+    if (user.role !== 'seller' && user.role !== 'admin' && user.role !== 'super_admin') {
         showNotification('Access denied. Seller account required.', 'error');
         setTimeout(() => {
             window.location.href = 'index.html';
