@@ -277,25 +277,31 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
             
             try {
-                // TODO: Send to backend API when deployed
-                // For now, simulate API call
-                await new Promise(resolve => setTimeout(resolve, 1500));
+                // Submit to backend API
+                const token = localStorage.getItem('naijamall_token') || localStorage.getItem('authToken');
                 
-                // Uncomment when backend is ready:
-                /*
+                if (!token) {
+                    alert('Please login to submit your shopping list.');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                    return;
+                }
+                
+                // Submit to backend
                 const response = await fetch(`${API_CONFIG.BASE_URL}/shopping-lists`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        'Authorization': `Bearer ${token}`
                     },
                     body: JSON.stringify(formData)
                 });
                 
+                const result = await response.json();
+                
                 if (!response.ok) {
-                    throw new Error('Failed to submit shopping list');
+                    throw new Error(result.message || 'Failed to submit shopping list');
                 }
-                */
                 
                 // Show success message
                 shoppingListForm.style.display = 'none';
