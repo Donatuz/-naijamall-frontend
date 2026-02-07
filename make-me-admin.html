@@ -279,8 +279,8 @@
 
         // Check login status and display user info
         window.addEventListener('DOMContentLoaded', () => {
-            const userString = localStorage.getItem('user');
-            const token = localStorage.getItem('token');
+            const userString = localStorage.getItem('naijamall_user') || localStorage.getItem('user');
+            const token = localStorage.getItem('naijamall_token') || localStorage.getItem('token');
 
             if (!userString || !token) {
                 document.getElementById('notLoggedIn').style.display = 'block';

@@ -2,7 +2,7 @@ import { AuthService, AdminService } from './api-service.js';
 
 // Check if user is admin or super admin
 const checkAdminAccess = () => {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const user = JSON.parse(localStorage.getItem('naijamall_user') || localStorage.getItem('user') || '{}');
     const adminRoles = ['admin', 'super_admin'];
     if (!user || !adminRoles.includes(user.role)) {
         alert('Access denied. Admin privileges required.');
@@ -14,7 +14,7 @@ const checkAdminAccess = () => {
 
 // Check if current user is super admin
 const isSuperAdmin = () => {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const user = JSON.parse(localStorage.getItem('naijamall_user') || localStorage.getItem('user') || '{}');
     return user.role === 'super_admin';
 };
 

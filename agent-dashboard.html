@@ -299,7 +299,7 @@
 
         // Check access
         const checkAccess = () => {
-            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const user = JSON.parse(localStorage.getItem('naijamall_user') || localStorage.getItem('user') || '{}');
             if (!user || !['agent', 'admin', 'super_admin'].includes(user.role)) {
                 alert('Access denied. Agent privileges required.');
                 window.location.href = 'index.html';
