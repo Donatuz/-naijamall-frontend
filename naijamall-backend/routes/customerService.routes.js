@@ -6,7 +6,8 @@ const {
     assignOrderToAgent,
     getAvailableAgents,
     getOrderDetails,
-    updateOrderNotes
+    updateOrderNotes,
+    getAnalytics
 } = require('../controllers/customerService.controller');
 const { protect, authorize } = require('../middleware/auth.middleware');
 
@@ -22,5 +23,8 @@ router.patch('/orders/:orderId/notes', updateOrderNotes);
 
 // Agents
 router.get('/agents', getAvailableAgents);
+
+// Analytics
+router.get('/analytics', getAnalytics);
 
 module.exports = router;

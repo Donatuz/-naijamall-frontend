@@ -231,3 +231,51 @@ exports.getAgentStats = async (req, res) => {
         });
     }
 };
+
+// @desc    Get analytics for agent
+// @route   GET /api/agent/analytics
+// @access  Private (Agent)
+exports.getAnalytics = async (req, res) => {
+    try {
+        const { period = '30days' } = req.query;
+        const now = new Date();
+        let startDate;
+
+        switch (period) {
+            case '7days': startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000); break;
+            case '30days': startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); break;
+            case '90days': startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000); break;
+            default: startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        }
+
+        // Tasks completed over time
+        const tasksCompleted = await Order.aggregate([
+            { $match: { assignedAgent: req.user._id, createdAt: { $gte: startDate }, status: { $in: ['ready_for_delivery', 'out_for_delivery', 'delivered'] } } },
+            { $group: { _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } }, count: { $sum: 1 } } },
+            { $sort: { _id: 1 } }
+        ]);
+
+        // Completion rate
+        const total = await Order.countDocuments({ assignedAgent: req.user._id });
+        const completed = await Order.countDocuments({ assignedAgent: req.user._id, status: { $in: ['ready_for_delivery', 'out_for_delivery', 'delivered'] } });
+        const inProgress = await Order.countDocuments({ assignedAgent: req.user._id, status: 'shopping' });
+        const pending = total - completed - inProgress;
+
+        res.status(200).json({
+            success: true,
+            data: {
+                tasks: {
+                    labels: tasksCompleted.map(t => new Date(t._id).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })),
+                    values: tasksCompleted.map(t => t.count)
+                },
+                rate: {
+                    labels: ['Completed', 'In Progress', 'Pending'],
+                    values: [completed, inProgress, pending]
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Get agent analytics error:', error);
+        res.status(500).json({ success: false, message: 'Error fetching analytics' });
+    }
+};

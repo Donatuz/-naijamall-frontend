@@ -1,10 +1,20 @@
 // Seller Dashboard Logic
 import { AuthService, ProductService } from './api-service.js';
+import { API_CONFIG } from './api-config.js';
+
+// Chart instances
+let sellerRevenueChart, sellerProductsChart, sellerTopProductsChart, sellerOrderStatusChart;
 
 // Check authentication on page load
 document.addEventListener('DOMContentLoaded', async () => {
     await checkSellerAuth();
     await loadDashboardData();
+    
+    // Initialize charts after a delay
+    setTimeout(() => {
+        initSellerCharts();
+        updateSellerCharts();
+    }, 500);
 });
 
 // Check if user is authenticated and is a seller
@@ -206,6 +216,64 @@ document.getElementById('logoutBtn').addEventListener('click', (e) => {
 });
 
 // Notification system
+// Initialize seller charts
+function initSellerCharts() {
+    const revenueCtx = document.getElementById('sellerRevenueChart')?.getContext('2d');
+    if (revenueCtx) {
+        sellerRevenueChart = new Chart(revenueCtx, {
+            type: 'line',
+            data: { labels: [], datasets: [{ label: 'Revenue (₦)', data: [], backgroundColor: 'rgba(40, 167, 69, 0.2)', borderColor: '#28a745', borderWidth: 2, fill: true, tension: 0.4 }] },
+            options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: v => '₦' + v.toLocaleString() } } } }
+        });
+    }
+    const productsCtx = document.getElementById('sellerProductsChart')?.getContext('2d');
+    if (productsCtx) {
+        sellerProductsChart = new Chart(productsCtx, {
+            type: 'bar',
+            data: { labels: [], datasets: [{ label: 'Products Sold', data: [], backgroundColor: '#20c997', borderWidth: 1 }] },
+            options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+        });
+    }
+    const topProductsCtx = document.getElementById('sellerTopProductsChart')?.getContext('2d');
+    if (topProductsCtx) {
+        sellerTopProductsChart = new Chart(topProductsCtx, {
+            type: 'bar',
+            data: { labels: [], datasets: [{ label: 'Units Sold', data: [], backgroundColor: '#ffc107', borderWidth: 1 }] },
+            options: { responsive: true, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } }
+        });
+    }
+    const statusCtx = document.getElementById('sellerOrderStatusChart')?.getContext('2d');
+    if (statusCtx) {
+        sellerOrderStatusChart = new Chart(statusCtx, {
+            type: 'doughnut',
+            data: { labels: [], datasets: [{ data: [], backgroundColor: ['#28a745', '#ffc107', '#17a2b8', '#dc3545', '#6c757d'] }] },
+            options: { responsive: true, plugins: { legend: { display: true, position: 'bottom' } } }
+        });
+    }
+}
+
+window.updateSellerCharts = async () => {
+    try {
+        const period = document.getElementById('sellerChartPeriod')?.value || '30days';
+        const token = localStorage.getItem('naijamall_token') || localStorage.getItem('authToken');
+        const response = await fetch(`${API_CONFIG.BASE_URL}/seller/analytics?period=${period}`, {
+            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+        });
+        if (response.ok) {
+            const result = await response.json();
+            if (result.success && result.data) {
+                const d = result.data;
+                if (sellerRevenueChart && d.revenue) { sellerRevenueChart.data.labels = d.revenue.labels; sellerRevenueChart.data.datasets[0].data = d.revenue.values; sellerRevenueChart.update(); }
+                if (sellerProductsChart && d.productsSold) { sellerProductsChart.data.labels = d.productsSold.labels; sellerProductsChart.data.datasets[0].data = d.productsSold.values; sellerProductsChart.update(); }
+                if (sellerTopProductsChart && d.topProducts) { sellerTopProductsChart.data.labels = d.topProducts.labels; sellerTopProductsChart.data.datasets[0].data = d.topProducts.values; sellerTopProductsChart.update(); }
+                if (sellerOrderStatusChart && d.orderStatus) { sellerOrderStatusChart.data.labels = d.orderStatus.labels; sellerOrderStatusChart.data.datasets[0].data = d.orderStatus.values; sellerOrderStatusChart.update(); }
+            }
+        }
+    } catch (error) {
+        console.error('Error updating seller charts:', error);
+    }
+};
+
 function showNotification(message, type = 'info') {
     const container = document.getElementById('notification-container');
     const notification = document.createElement('div');

@@ -516,6 +516,11 @@ const CustomerServiceService = {
             method: 'PATCH',
             body: JSON.stringify({ internalNotes })
         });
+    },
+
+    // Get analytics data
+    getAnalytics: async (period = '30days') => {
+        return await apiRequest(`/customer-service/analytics?period=${period}`);
     }
 };
 
@@ -553,6 +558,11 @@ const AgentService = {
     // Get agent stats
     getAgentStats: async () => {
         return await apiRequest('/agent/stats');
+    },
+
+    // Get analytics data
+    getAnalytics: async (period = '30days') => {
+        return await apiRequest(`/agent/analytics?period=${period}`);
     }
 };
 

@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="styles-extended.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         .agent-container {
             max-width: 1400px;
@@ -276,6 +277,36 @@
             </div>
         </div>
 
+        <!-- Analytics Charts -->
+        <div class="dashboard-section">
+            <h2 style="margin-bottom: 20px;">
+                <i class="fas fa-chart-bar"></i> My Performance
+            </h2>
+            
+            <div class="filter-bar" style="margin-bottom: 20px;">
+                <label style="font-weight: 600; margin-right: 10px;">Time Period:</label>
+                <select id="agentChartPeriod" onchange="updateAgentCharts()">
+                    <option value="7days">Last 7 Days</option>
+                    <option value="30days" selected>Last 30 Days</option>
+                    <option value="90days">Last 90 Days</option>
+                </select>
+                <button class="action-btn" onclick="updateAgentCharts()" style="margin-left: 10px;">
+                    <i class="fas fa-sync"></i> Refresh
+                </button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+                <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <h3 style="margin-bottom: 15px;">Tasks Completed</h3>
+                    <canvas id="agentTasksChart"></canvas>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <h3 style="margin-bottom: 15px;">Completion Rate</h3>
+                    <canvas id="agentRateChart"></canvas>
+                </div>
+            </div>
+        </div>
+
         <div class="dashboard-section">
             <h2 style="margin-bottom: 20px;">My Assigned Orders</h2>
             
@@ -306,6 +337,79 @@
     <script type="module">
         import { AuthService, AgentService } from './api-service.js';
 
+        // Chart instances
+        let agentTasksChart, agentRateChart;
+
+        // Initialize charts
+        const initAgentCharts = () => {
+            // Tasks completed chart
+            const tasksCtx = document.getElementById('agentTasksChart').getContext('2d');
+            agentTasksChart = new Chart(tasksCtx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Tasks Completed',
+                        data: [],
+                        backgroundColor: '#f59e0b',
+                        borderColor: '#d97706',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { precision: 0 } }
+                    }
+                }
+            });
+
+            // Completion rate chart
+            const rateCtx = document.getElementById('agentRateChart').getContext('2d');
+            agentRateChart = new Chart(rateCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completed', 'In Progress', 'Pending'],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: ['#22c55e', '#f59e0b', '#ef4444']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: true, position: 'bottom' }
+                    }
+                }
+            });
+        };
+
+        // Update Agent charts
+        window.updateAgentCharts = async () => {
+            try {
+                const period = document.getElementById('agentChartPeriod').value;
+                const response = await AgentService.getAnalytics(period);
+                
+                if (response.success) {
+                    const data = response.data;
+                    
+                    // Update tasks chart
+                    agentTasksChart.data.labels = data.tasks.labels;
+                    agentTasksChart.data.datasets[0].data = data.tasks.values;
+                    agentTasksChart.update();
+                    
+                    // Update rate chart
+                    agentRateChart.data.datasets[0].data = data.rate.values;
+                    agentRateChart.update();
+                }
+            } catch (error) {
+                console.error('Error updating agent charts:', error);
+            }
+        };
+
         // Check access
         const checkAccess = () => {
             const user = JSON.parse(localStorage.getItem('naijamall_user') || localStorage.getItem('user') || '{}');
@@ -322,6 +426,10 @@
             if (!checkAccess()) return;
             loadOrders();
             loadStats();
+            setTimeout(() => {
+                initAgentCharts();
+                updateAgentCharts();
+            }, 100);
         });
 
         // Load stats

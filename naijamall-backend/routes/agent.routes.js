@@ -5,7 +5,8 @@ const {
     getOrderDetails,
     updateOrderStatus,
     completeShoppingTask,
-    getAgentStats
+    getAgentStats,
+    getAnalytics
 } = require('../controllers/agent.controller');
 const { protect, authorize } = require('../middleware/auth.middleware');
 
@@ -20,5 +21,8 @@ router.post('/orders/:orderId/complete-shopping', completeShoppingTask);
 
 // Stats
 router.get('/stats', getAgentStats);
+
+// Analytics
+router.get('/analytics', getAnalytics);
 
 module.exports = router;

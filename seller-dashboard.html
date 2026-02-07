@@ -6,6 +6,7 @@
     <title>Seller Dashboard - NaijaMall</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="styles-extended.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         .dashboard-container {
             max-width: 1400px;
@@ -262,6 +263,49 @@
             <div class="stat-card">
                 <h3>Total Orders</h3>
                 <div class="stat-value" id="totalOrders">0</div>
+            </div>
+        </div>
+
+        <!-- Analytics Charts -->
+        <div class="products-section" style="margin-bottom: 30px;">
+            <h2 style="margin-bottom: 20px;">
+                <i class="fas fa-chart-line"></i> Sales Analytics
+            </h2>
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <label style="font-weight: 600; margin-right: 10px;">Time Period:</label>
+                <select id="sellerChartPeriod" onchange="updateSellerCharts()" style="padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                    <option value="7days">Last 7 Days</option>
+                    <option value="30days" selected>Last 30 Days</option>
+                    <option value="90days">Last 90 Days</option>
+                    <option value="6months">Last 6 Months</option>
+                    <option value="1year">Last Year</option>
+                </select>
+                <button class="btn btn-secondary" onclick="updateSellerCharts()" style="padding: 8px 16px;">
+                    🔄 Refresh Charts
+                </button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                <div style="background: #f9fafb; padding: 20px; border-radius: 10px;">
+                    <h3 style="margin-bottom: 15px; color: #333;">📊 Sales Revenue</h3>
+                    <canvas id="sellerRevenueChart"></canvas>
+                </div>
+                <div style="background: #f9fafb; padding: 20px; border-radius: 10px;">
+                    <h3 style="margin-bottom: 15px; color: #333;">📦 Products Sold</h3>
+                    <canvas id="sellerProductsChart"></canvas>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="background: #f9fafb; padding: 20px; border-radius: 10px;">
+                    <h3 style="margin-bottom: 15px; color: #333;">🏆 Top Selling Products</h3>
+                    <canvas id="sellerTopProductsChart"></canvas>
+                </div>
+                <div style="background: #f9fafb; padding: 20px; border-radius: 10px;">
+                    <h3 style="margin-bottom: 15px; color: #333;">📈 Order Status</h3>
+                    <canvas id="sellerOrderStatusChart"></canvas>
+                </div>
             </div>
         </div>
 

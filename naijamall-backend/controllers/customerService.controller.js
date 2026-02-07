@@ -252,3 +252,51 @@ exports.updateOrderNotes = async (req, res) => {
         });
     }
 };
+
+// @desc    Get analytics for customer service
+// @route   GET /api/customer-service/analytics
+// @access  Private (Customer Service)
+exports.getAnalytics = async (req, res) => {
+    try {
+        const { period = '30days' } = req.query;
+        const now = new Date();
+        let startDate;
+
+        switch (period) {
+            case '7days': startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000); break;
+            case '30days': startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); break;
+            case '90days': startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000); break;
+            default: startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        }
+
+        // Orders handled by this CS or all CS
+        const ordersHandled = await Order.aggregate([
+            { $match: { createdAt: { $gte: startDate } } },
+            { $group: { _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } }, count: { $sum: 1 } } },
+            { $sort: { _id: 1 } }
+        ]);
+
+        // Orders by status
+        const ordersByStatus = await Order.aggregate([
+            { $match: { createdAt: { $gte: startDate } } },
+            { $group: { _id: "$status", count: { $sum: 1 } } }
+        ]);
+
+        res.status(200).json({
+            success: true,
+            data: {
+                orders: {
+                    labels: ordersHandled.map(o => new Date(o._id).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })),
+                    values: ordersHandled.map(o => o.count)
+                },
+                status: {
+                    labels: ordersByStatus.map(o => o._id.replace(/_/g, ' ')),
+                    values: ordersByStatus.map(o => o.count)
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Get CS analytics error:', error);
+        res.status(500).json({ success: false, message: 'Error fetching analytics' });
+    }
+};
