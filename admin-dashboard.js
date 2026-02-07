@@ -158,13 +158,14 @@ window.loadOrders = async (page = 1) => {
 // Load users
 window.loadUsers = async (page = 1) => {
     const roleFilter = document.getElementById('userRoleFilter').value;
+    const statusFilter = document.getElementById('userStatusFilter').value;
     const searchQuery = document.getElementById('userSearchInput').value;
     const usersContent = document.getElementById('usersContent');
     
     usersContent.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading users...</div>';
     
     try {
-        const response = await AdminService.getAllUsers(roleFilter, searchQuery, page);
+        const response = await AdminService.getAllUsers(roleFilter, statusFilter, searchQuery, page);
         
         if (response.success && response.data.length > 0) {
             usersContent.innerHTML = `
@@ -193,18 +194,23 @@ window.loadUsers = async (page = 1) => {
                                     </span>
                                 </td>
                                 <td>${new Date(user.createdAt).toLocaleDateString()}</td>
-                                <td>
+                                <td style="white-space: nowrap;">
                                     ${isSuperAdmin() || (user.role !== 'super_admin' && user.role !== 'admin') ? `
-                                        <button class="action-btn view" onclick="showRoleModal('${user._id}', '${user.role}', '${user.firstName} ${user.lastName}')">
-                                            <i class="fas fa-user-tag"></i> Change Role
+                                        <button class="action-btn" style="background: #8b5cf6;" onclick="showRoleModal('${user._id}', '${user.role}', '${user.firstName} ${user.lastName}')">
+                                            <i class="fas fa-user-tag"></i> Role
                                         </button>
                                     ` : ''}
                                     <button class="action-btn ${user.isActive ? 'cancelled' : 'assign'}" 
                                             onclick="toggleUserStatus('${user._id}', ${!user.isActive})"
-                                            style="background: ${user.isActive ? '#ef4444' : '#22c55e'}">
+                                            style="background: ${user.isActive ? '#f59e0b' : '#22c55e'}">
                                         <i class="fas fa-${user.isActive ? 'ban' : 'check'}"></i> 
                                         ${user.isActive ? 'Deactivate' : 'Activate'}
                                     </button>
+                                    ${isSuperAdmin() || (user.role !== 'super_admin' && user.role !== 'admin') ? `
+                                        <button class="action-btn" style="background: #ef4444;" onclick="confirmDeleteUser('${user._id}', '${user.firstName} ${user.lastName}')">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    ` : ''}
                                 </td>
                             </tr>
                         `).join('')}
@@ -468,6 +474,61 @@ window.updateRole = async (userId) => {
     } catch (error) {
         console.error('Error updating role:', error);
         showNotification(error.message || 'Error updating user role', 'error');
+    }
+};
+
+// Confirm delete user
+window.confirmDeleteUser = (userId, userName) => {
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay';
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header">
+                <h2><i class="fas fa-exclamation-triangle" style="color: #ef4444;"></i> Confirm Delete</h2>
+                <button class="close-btn" onclick="closeDeleteModal()">&times;</button>
+            </div>
+            <div class="modal-body" style="text-align: center;">
+                <p style="font-size: 16px; margin-bottom: 15px;">
+                    Are you sure you want to delete <strong>${userName}</strong>?
+                </p>
+                <p style="color: #ef4444; font-size: 14px;">
+                    ⚠️ This action cannot be undone. All user data will be permanently deleted.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+                <button class="btn" style="background: #ef4444; color: white;" onclick="deleteUser('${userId}')">
+                    <i class="fas fa-trash"></i> Delete User
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+};
+
+// Close delete modal
+window.closeDeleteModal = () => {
+    const modal = document.querySelectorAll('.modal-overlay');
+    modal.forEach(m => m.remove());
+};
+
+// Delete user
+window.deleteUser = async (userId) => {
+    try {
+        const response = await AdminService.deleteUser(userId);
+        
+        if (response.success) {
+            showNotification('User deleted successfully', 'success');
+            closeDeleteModal();
+            loadUsers();
+            loadDashboardStats(); // Refresh stats
+        } else {
+            showNotification(response.message || 'Failed to delete user', 'error');
+        }
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        showNotification(error.message || 'Error deleting user', 'error');
     }
 };
 

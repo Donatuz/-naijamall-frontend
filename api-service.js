@@ -469,6 +469,88 @@ const AdminService = {
     }
 };
 
+// Customer Service Service
+const CustomerServiceService = {
+    // Get all orders
+    getOrders: async (status = '', page = 1) => {
+        const params = new URLSearchParams();
+        if (status) params.append('status', status);
+        params.append('page', page);
+        return await apiRequest(`/customer-service/orders?${params.toString()}`);
+    },
+
+    // Get my assigned orders
+    getMyOrders: async (status = '', page = 1) => {
+        const params = new URLSearchParams();
+        if (status) params.append('status', status);
+        params.append('page', page);
+        return await apiRequest(`/customer-service/my-orders?${params.toString()}`);
+    },
+
+    // Get order details
+    getOrderDetails: async (orderId) => {
+        return await apiRequest(`/customer-service/orders/${orderId}`);
+    },
+
+    // Get available agents
+    getAvailableAgents: async () => {
+        return await apiRequest('/customer-service/agents');
+    },
+
+    // Assign order to agent
+    assignOrderToAgent: async (orderId, agentId, notes = '') => {
+        return await apiRequest(`/customer-service/orders/${orderId}/assign-agent`, {
+            method: 'POST',
+            body: JSON.stringify({ agentId, notes })
+        });
+    },
+
+    // Update order notes
+    updateOrderNotes: async (orderId, internalNotes) => {
+        return await apiRequest(`/customer-service/orders/${orderId}/notes`, {
+            method: 'PATCH',
+            body: JSON.stringify({ internalNotes })
+        });
+    }
+};
+
+// Agent Service
+const AgentService = {
+    // Get my assigned orders
+    getMyAssignedOrders: async (status = '', page = 1) => {
+        const params = new URLSearchParams();
+        if (status) params.append('status', status);
+        params.append('page', page);
+        return await apiRequest(`/agent/orders?${params.toString()}`);
+    },
+
+    // Get order details
+    getOrderDetails: async (orderId) => {
+        return await apiRequest(`/agent/orders/${orderId}`);
+    },
+
+    // Update order status
+    updateOrderStatus: async (orderId, status, notes = '') => {
+        return await apiRequest(`/agent/orders/${orderId}/status`, {
+            method: 'PATCH',
+            body: JSON.stringify({ status, notes })
+        });
+    },
+
+    // Complete shopping task
+    completeShoppingTask: async (orderId, notes = '', actualItemsPurchased = null) => {
+        return await apiRequest(`/agent/orders/${orderId}/complete-shopping`, {
+            method: 'POST',
+            body: JSON.stringify({ notes, actualItemsPurchased })
+        });
+    },
+
+    // Get agent stats
+    getAgentStats: async () => {
+        return await apiRequest('/agent/stats');
+    }
+};
+
 // Export all services
 export {
     AuthService,
@@ -477,5 +559,7 @@ export {
     OrderService,
     PaymentService,
     CartService,
-    AdminService
+    AdminService,
+    CustomerServiceService,
+    AgentService
 };

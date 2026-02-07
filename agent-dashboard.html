@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Dashboard - NaijaMall</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles-extended.css">
+    <style>
+        .agent-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .agent-header {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .stat-card .icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: #f59e0b;
+        }
+
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1a1a1a;
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .dashboard-section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-bar select {
+            padding: 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th {
+            background: #f9fafb;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.shopping { background: #fef3c7; color: #92400e; }
+        .status-badge.ready_for_delivery { background: #d1fae5; color: #065f46; }
+        .status-badge.out_for_delivery { background: #dbeafe; color: #1e40af; }
+        .status-badge.delivered { background: #d1fae5; color: #065f46; }
+
+        .action-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            color: white;
+            background: #f59e0b;
+            margin-right: 5px;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .action-btn.view {
+            background: #3b82f6;
+        }
+
+        .action-btn.complete {
+            background: #10b981;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 60px;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+
+        .order-items {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .order-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="agent-container">
+        <div class="agent-header">
+            <h1><i class="fas fa-shopping-basket"></i> Agent Dashboard</h1>
+            <p>Manage your assigned shopping tasks</p>
+            <button onclick="logout()" style="background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; margin-top: 10px;">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="icon"><i class="fas fa-tasks"></i></div>
+                <div class="value" id="totalAssigned">0</div>
+                <h3>Total Assigned</h3>
+            </div>
+            <div class="stat-card">
+                <div class="icon"><i class="fas fa-shopping-bag"></i></div>
+                <div class="value" id="inProgress">0</div>
+                <h3>In Progress</h3>
+            </div>
+            <div class="stat-card">
+                <div class="icon"><i class="fas fa-check-circle"></i></div>
+                <div class="value" id="completed">0</div>
+                <h3>Completed</h3>
+            </div>
+        </div>
+
+        <div class="dashboard-section">
+            <h2 style="margin-bottom: 20px;">My Assigned Orders</h2>
+            
+            <div class="filter-bar">
+                <select id="statusFilter" onchange="loadOrders()">
+                    <option value="">All Statuses</option>
+                    <option value="shopping">Shopping</option>
+                    <option value="ready_for_delivery">Ready for Delivery</option>
+                </select>
+                <button class="action-btn" onclick="loadOrders()">
+                    <i class="fas fa-sync"></i> Refresh
+                </button>
+            </div>
+
+            <div id="ordersContent">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i> Loading orders...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div id="orderDetailsModal" style="display: none;"></div>
+
+    <script type="module" src="api-config.js"></script>
+    <script type="module" src="api-service.js"></script>
+    <script type="module">
+        import { AuthService, AgentService } from './api-service.js';
+
+        // Check access
+        const checkAccess = () => {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            if (!user || !['agent', 'admin', 'super_admin'].includes(user.role)) {
+                alert('Access denied. Agent privileges required.');
+                window.location.href = 'index.html';
+                return false;
+            }
+            return true;
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!checkAccess()) return;
+            loadOrders();
+            loadStats();
+        });
+
+        // Load stats
+        const loadStats = async () => {
+            try {
+                const response = await AgentService.getAgentStats();
+                
+                if (response.success) {
+                    document.getElementById('totalAssigned').textContent = response.data.totalAssigned || 0;
+                    document.getElementById('inProgress').textContent = response.data.inProgress || 0;
+                    document.getElementById('completed').textContent = response.data.completed || 0;
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        };
+
+        // Load orders
+        window.loadOrders = async (page = 1) => {
+            const status = document.getElementById('statusFilter').value;
+            const ordersContent = document.getElementById('ordersContent');
+            
+            ordersContent.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading orders...</div>';
+            
+            try {
+                const response = await AgentService.getMyAssignedOrders(status, page);
+                
+                if (response.success && response.data.length > 0) {
+                    ordersContent.innerHTML = `
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Items</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Assigned By</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${response.data.map(order => `
+                                    <tr>
+                                        <td><strong>#${order.orderNumber || order._id.slice(-8)}</strong></td>
+                                        <td>
+                                            ${order.buyer?.firstName || 'N/A'} ${order.buyer?.lastName || ''}<br>
+                                            <small>${order.buyer?.phone || ''}</small>
+                                        </td>
+                                        <td>${order.items?.length || 0} item(s)</td>
+                                        <td><strong>₦${order.totalAmount?.toLocaleString() || 0}</strong></td>
+                                        <td><span class="status-badge ${order.status}">${order.status?.replace(/_/g, ' ')}</span></td>
+                                        <td>
+                                            ${order.customerService ? 
+                                                `${order.customerService.firstName} ${order.customerService.lastName}` : 
+                                                'N/A'}
+                                        </td>
+                                        <td>${new Date(order.createdAt).toLocaleDateString()}</td>
+                                        <td style="white-space: nowrap;">
+                                            <button class="action-btn view" onclick="viewOrderDetails('${order._id}')">
+                                                <i class="fas fa-eye"></i> View
+                                            </button>
+                                            ${order.status === 'shopping' ? `
+                                                <button class="action-btn complete" onclick="showCompleteModal('${order._id}', '${order.orderNumber || order._id.slice(-8)}')">
+                                                    <i class="fas fa-check"></i> Complete
+                                                </button>
+                                            ` : ''}
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                } else {
+                    ordersContent.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-shopping-basket"></i>
+                            <h3>No orders assigned</h3>
+                            <p>Orders assigned to you will appear here.</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading orders:', error);
+                ordersContent.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Error loading orders</h3>
+                        <p>${error.message || 'Please try again later.'}</p>
+                    </div>
+                `;
+            }
+        };
+
+        // View order details
+        window.viewOrderDetails = async (orderId) => {
+            try {
+                const response = await AgentService.getOrderDetails(orderId);
+                
+                if (!response.success) {
+                    alert('Failed to load order details.');
+                    return;
+                }
+
+                const order = response.data;
+                const modal = document.getElementById('orderDetailsModal');
+                
+                modal.innerHTML = `
+                    <div class="modal-overlay">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h2><i class="fas fa-file-invoice"></i> Order Details - #${order.orderNumber || order._id.slice(-8)}</h2>
+                                <button class="close-btn" onclick="closeDetailsModal()">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <h3>Customer Information</h3>
+                                <p>
+                                    <strong>Name:</strong> ${order.buyer?.firstName} ${order.buyer?.lastName}<br>
+                                    <strong>Phone:</strong> ${order.buyer?.phone || 'N/A'}<br>
+                                    <strong>Email:</strong> ${order.buyer?.email || 'N/A'}
+                                </p>
+
+                                <h3 style="margin-top: 20px;">Delivery Address</h3>
+                                <p>
+                                    ${order.shippingAddress?.street || 'N/A'}<br>
+                                    ${order.shippingAddress?.city || 'N/A'}, ${order.shippingAddress?.state || 'N/A'}<br>
+                                    <strong>Phone:</strong> ${order.shippingAddress?.phone || 'N/A'}
+                                </p>
+
+                                <h3 style="margin-top: 20px;">Items to Purchase</h3>
+                                <div class="order-items">
+                                    ${order.items?.map(item => `
+                                        <div class="order-item">
+                                            <strong>${item.product?.name || 'Product'}</strong><br>
+                                            Quantity: ${item.quantity} × ₦${item.price?.toLocaleString() || 0} = 
+                                            <strong>₦${item.subtotal?.toLocaleString() || 0}</strong>
+                                        </div>
+                                    `).join('') || 'No items'}
+                                </div>
+
+                                <h3 style="margin-top: 20px;">Order Summary</h3>
+                                <p>
+                                    <strong>Items Total:</strong> ₦${order.itemsTotal?.toLocaleString() || 0}<br>
+                                    <strong>Market Procurement Fee:</strong> ₦${order.marketProcurementFee?.toLocaleString() || 0}<br>
+                                    <strong>Delivery Fee:</strong> ₦${order.deliveryFee?.toLocaleString() || 0}<br>
+                                    <strong>Escrow Fee:</strong> ₦${order.escrowFee?.toLocaleString() || 0}<br>
+                                    <strong style="font-size: 18px;">Total Amount:</strong> 
+                                    <strong style="font-size: 18px; color: #10b981;">₦${order.totalAmount?.toLocaleString() || 0}</strong>
+                                </p>
+
+                                ${order.buyerNotes ? `
+                                    <h3 style="margin-top: 20px;">Customer Notes</h3>
+                                    <p style="background: #fef3c7; padding: 10px; border-radius: 5px;">${order.buyerNotes}</p>
+                                ` : ''}
+
+                                ${order.internalNotes ? `
+                                    <h3 style="margin-top: 20px;">Internal Notes</h3>
+                                    <p style="background: #e0e7ff; padding: 10px; border-radius: 5px;">${order.internalNotes}</p>
+                                ` : ''}
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" onclick="closeDetailsModal()">Close</button>
+                                ${order.status === 'shopping' ? `
+                                    <button class="btn btn-success" onclick="closeDetailsModal(); showCompleteModal('${order._id}', '${order.orderNumber || order._id.slice(-8)}')">
+                                        <i class="fas fa-check"></i> Mark as Complete
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                modal.style.display = 'block';
+            } catch (error) {
+                console.error('Error loading order details:', error);
+                alert('Error loading order details.');
+            }
+        };
+
+        // Close details modal
+        window.closeDetailsModal = () => {
+            document.getElementById('orderDetailsModal').style.display = 'none';
+            document.getElementById('orderDetailsModal').innerHTML = '';
+        };
+
+        // Show complete modal
+        window.showCompleteModal = (orderId, orderNumber) => {
+            const modal = document.getElementById('orderDetailsModal');
+            modal.innerHTML = `
+                <div class="modal-overlay">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2><i class="fas fa-check-circle"></i> Complete Shopping Task</h2>
+                            <button class="close-btn" onclick="closeDetailsModal()">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <p><strong>Order:</strong> #${orderNumber}</p>
+                            <p style="color: #10b981; margin: 15px 0;">
+                                <i class="fas fa-info-circle"></i> 
+                                Mark this order as complete once you've purchased all items from the market.
+                            </p>
+                            
+                            <label><strong>Shopping Notes:</strong></label>
+                            <textarea id="completionNotes" rows="4" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #e5e7eb; border-radius: 8px;" placeholder="Add notes about the shopping (e.g., items purchased, substitutions made, any issues encountered)..."></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" onclick="closeDetailsModal()">Cancel</button>
+                            <button class="btn btn-success" onclick="completeShopping('${orderId}')">
+                                <i class="fas fa-check"></i> Mark as Complete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            modal.style.display = 'block';
+        };
+
+        // Complete shopping
+        window.completeShopping = async (orderId) => {
+            const notes = document.getElementById('completionNotes').value;
+
+            if (!notes.trim()) {
+                alert('Please add shopping notes before completing.');
+                return;
+            }
+
+            try {
+                const response = await AgentService.completeShoppingTask(orderId, notes);
+                
+                if (response.success) {
+                    alert('Shopping task marked as complete!');
+                    closeDetailsModal();
+                    loadOrders();
+                    loadStats();
+                } else {
+                    alert(response.message || 'Failed to complete shopping task.');
+                }
+            } catch (error) {
+                console.error('Error completing shopping:', error);
+                alert(error.message || 'Error completing shopping task.');
+            }
+        };
+
+        // Logout
+        window.logout = () => {
+            if (confirm('Are you sure you want to logout?')) {
+                AuthService.logout();
+            }
+        };
+    </script>
+</body>
+</html>
