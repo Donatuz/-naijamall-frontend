@@ -471,6 +471,14 @@ const AdminService = {
     // Get analytics data
     getAnalytics: async (period = '30days') => {
         return await apiRequest(`/admin/analytics?period=${period}`);
+    },
+
+    // Get shopping lists
+    getShoppingLists: async (status = '', page = 1) => {
+        const params = new URLSearchParams();
+        if (status) params.append('status', status);
+        params.append('page', page);
+        return await apiRequest(`/shopping-lists?${params.toString()}`);
     }
 };
 
@@ -521,6 +529,21 @@ const CustomerServiceService = {
     // Get analytics data
     getAnalytics: async (period = '30days') => {
         return await apiRequest(`/customer-service/analytics?period=${period}`);
+    },
+
+    // Get shopping lists
+    getShoppingLists: async (status = '') => {
+        const params = new URLSearchParams();
+        if (status) params.append('status', status);
+        return await apiRequest(`/shopping-lists?${params.toString()}`);
+    },
+
+    // Assign shopping list to agent
+    assignShoppingListToAgent: async (listId, agentId, notes = '') => {
+        return await apiRequest(`/shopping-lists/${listId}/assign`, {
+            method: 'POST',
+            body: JSON.stringify({ agentId, notes })
+        });
     }
 };
 

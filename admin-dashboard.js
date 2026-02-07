@@ -61,6 +61,7 @@ const loadDashboardStats = async () => {
 window.switchTab = (tabName) => {
     // Hide all tabs
     document.getElementById('analyticsTab').style.display = 'none';
+    document.getElementById('shoppingListsTab').style.display = 'none';
     document.getElementById('ordersTab').style.display = 'none';
     document.getElementById('usersTab').style.display = 'none';
     document.getElementById('sellersTab').style.display = 'none';
@@ -72,17 +73,21 @@ window.switchTab = (tabName) => {
     if (tabName === 'analytics') {
         document.getElementById('analyticsTab').style.display = 'block';
         document.querySelectorAll('.tab')[0].classList.add('active');
+    } else if (tabName === 'shoppingLists') {
+        document.getElementById('shoppingListsTab').style.display = 'block';
+        document.querySelectorAll('.tab')[1].classList.add('active');
+        loadShoppingLists();
     } else if (tabName === 'orders') {
         document.getElementById('ordersTab').style.display = 'block';
-        document.querySelectorAll('.tab')[1].classList.add('active');
+        document.querySelectorAll('.tab')[2].classList.add('active');
         loadOrders();
     } else if (tabName === 'users') {
         document.getElementById('usersTab').style.display = 'block';
-        document.querySelectorAll('.tab')[2].classList.add('active');
+        document.querySelectorAll('.tab')[3].classList.add('active');
         loadUsers();
     } else if (tabName === 'sellers') {
         document.getElementById('sellersTab').style.display = 'block';
-        document.querySelectorAll('.tab')[3].classList.add('active');
+        document.querySelectorAll('.tab')[4].classList.add('active');
         loadPendingSellers();
     }
 };
@@ -734,6 +739,81 @@ const updateChartsWithMockData = () => {
     rolesChart.data.labels = ['Buyers', 'Sellers', 'Riders', 'Agents', 'Customer Service', 'Admins'];
     rolesChart.data.datasets[0].data = [45, 12, 8, 5, 3, 2];
     rolesChart.update();
+};
+
+// Load shopping lists
+window.loadShoppingLists = async (page = 1) => {
+    const statusFilter = document.getElementById('shoppingListStatusFilter').value;
+    const content = document.getElementById('shoppingListsContent');
+    
+    content.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading shopping lists...</div>';
+    
+    try {
+        const params = new URLSearchParams();
+        if (statusFilter) params.append('status', statusFilter);
+        params.append('page', page);
+        
+        const response = await AdminService.getShoppingLists(statusFilter, page);
+        
+        if (response.success && response.data.length > 0) {
+            content.innerHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Customer</th>
+                            <th>Items</th>
+                            <th>Status</th>
+                            <th>Assigned To</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${response.data.map(list => `
+                            <tr>
+                                <td><strong>#${list._id.slice(-6)}</strong></td>
+                                <td>
+                                    ${list.buyer?.firstName || 'N/A'} ${list.buyer?.lastName || ''}<br>
+                                    <small>${list.buyer?.phone || list.buyer?.email || ''}</small>
+                                </td>
+                                <td>${list.items?.length || 0} item(s)</td>
+                                <td><span class="status-badge ${list.status}">${list.status}</span></td>
+                                <td>${list.assignedTo ? `${list.assignedTo.firstName} ${list.assignedTo.lastName}` : '<span style="color: #ef4444;">Not Assigned</span>'}</td>
+                                <td>${new Date(list.createdAt).toLocaleDateString()}</td>
+                                <td style="white-space: nowrap;">
+                                    <button class="action-btn view" onclick="viewShoppingList('${list._id}')">
+                                        <i class="fas fa-eye"></i> View
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        } else {
+            content.innerHTML = `
+                <div style="text-align: center; padding: 60px 20px; color: #666;">
+                    <i class="fas fa-list-ul" style="font-size: 60px; color: #ddd; margin-bottom: 20px;"></i>
+                    <h3>No shopping lists found</h3>
+                    <p>Customer shopping lists will appear here when submitted.</p>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Load shopping lists error:', error);
+        content.innerHTML = `
+            <div style="text-align: center; padding: 60px 20px; color: #ef4444;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 60px; margin-bottom: 20px;"></i>
+                <h3>Error loading shopping lists</h3>
+                <p>${error.message || 'Please try again later.'}</p>
+            </div>
+        `;
+    }
+};
+
+window.viewShoppingList = async (id) => {
+    alert('Shopping list details: ' + id + '\n\nThis will show full details including items, customer info, and delivery address.');
 };
 
 // Notification helper

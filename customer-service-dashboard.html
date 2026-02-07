@@ -295,6 +295,32 @@
             </div>
         </div>
 
+        <!-- Shopping Lists Section -->
+        <div class="dashboard-section">
+            <h2 style="margin-bottom: 20px;">
+                <i class="fas fa-list-ul"></i> Shopping Lists / Quote Requests
+            </h2>
+            <p style="color: #666; margin-bottom: 15px;">Customer shopping list requests waiting for review and agent assignment</p>
+            
+            <div class="filter-bar" style="margin-bottom: 20px;">
+                <select id="shoppingListStatusFilter" onchange="loadShoppingLists()">
+                    <option value="">All Statuses</option>
+                    <option value="pending" selected>Pending</option>
+                    <option value="reviewed">Reviewed</option>
+                    <option value="assigned">Assigned to Agent</option>
+                </select>
+                <button class="action-btn" onclick="loadShoppingLists()">
+                    <i class="fas fa-sync"></i> Refresh
+                </button>
+            </div>
+
+            <div id="shoppingListsContent">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i> Loading shopping lists...
+                </div>
+            </div>
+        </div>
+
         <div class="dashboard-section">
             <h2 style="margin-bottom: 20px;">Customer Orders</h2>
             
@@ -416,9 +442,163 @@
             return true;
         };
 
+        // Load shopping lists
+        window.loadShoppingLists = async () => {
+            const status = document.getElementById('shoppingListStatusFilter').value;
+            const content = document.getElementById('shoppingListsContent');
+            
+            content.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading shopping lists...</div>';
+            
+            try {
+                const response = await CustomerServiceService.getShoppingLists(status);
+                
+                if (response.success && response.data.length > 0) {
+                    content.innerHTML = `
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Customer</th>
+                                    <th>Items</th>
+                                    <th>Status</th>
+                                    <th>Assigned To</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${response.data.map(list => `
+                                    <tr>
+                                        <td><strong>#${list._id.slice(-6)}</strong></td>
+                                        <td>
+                                            ${list.buyer?.firstName || 'N/A'} ${list.buyer?.lastName || ''}<br>
+                                            <small>${list.buyer?.phone || list.buyer?.email || ''}</small>
+                                        </td>
+                                        <td>${list.items?.length || 0} item(s)</td>
+                                        <td><span class="status-badge ${list.status}">${list.status}</span></td>
+                                        <td>${list.assignedTo ? `${list.assignedTo.firstName} ${list.assignedTo.lastName}` : '<span style="color: #ef4444;">Not Assigned</span>'}</td>
+                                        <td>${new Date(list.createdAt).toLocaleDateString()}</td>
+                                        <td style="white-space: nowrap;">
+                                            <button class="action-btn view" onclick="viewShoppingListDetails('${list._id}')">
+                                                <i class="fas fa-eye"></i> View
+                                            </button>
+                                            ${!list.assignedTo && list.status === 'pending' ? `
+                                                <button class="action-btn assign" onclick="showAssignShoppingListModal('${list._id}', '${list._id.slice(-6)}')">
+                                                    <i class="fas fa-user-plus"></i> Assign Agent
+                                                </button>
+                                            ` : ''}
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                } else {
+                    content.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-list-ul"></i>
+                            <h3>No shopping lists found</h3>
+                            <p>Customer shopping list requests will appear here.</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading shopping lists:', error);
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Error loading shopping lists</h3>
+                        <p>${error.message || 'Please try again later.'}</p>
+                    </div>
+                `;
+            }
+        };
+
+        // View shopping list details
+        window.viewShoppingListDetails = async (id) => {
+            alert('Shopping list details: ' + id + '\n\nThis will show full details including items and customer info.');
+        };
+
+        // Show assign shopping list modal
+        window.showAssignShoppingListModal = async (listId, listNumber) => {
+            try {
+                const response = await CustomerServiceService.getAvailableAgents();
+                
+                if (!response.success || !response.data.length) {
+                    alert('No agents available at the moment.');
+                    return;
+                }
+
+                const modal = document.getElementById('assignAgentModal');
+                modal.innerHTML = `
+                    <div class="modal-overlay">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h2><i class="fas fa-user-plus"></i> Assign Agent to Shopping List</h2>
+                                <button class="close-btn" onclick="closeAssignModal()">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <p><strong>Shopping List:</strong> #${listNumber}</p>
+                                <br>
+                                <label><strong>Select Agent:</strong></label>
+                                <select id="selectedAgent" class="form-control" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #e5e7eb; border-radius: 8px;">
+                                    <option value="">-- Choose an agent --</option>
+                                    ${response.data.map(agent => `
+                                        <option value="${agent._id}">
+                                            ${agent.firstName} ${agent.lastName} - ${agent.phone || agent.email}
+                                        </option>
+                                    `).join('')}
+                                </select>
+                                <br>
+                                <label><strong>Notes (optional):</strong></label>
+                                <textarea id="assignNotes" rows="3" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #e5e7eb; border-radius: 8px;" placeholder="Add any special instructions for the agent..."></textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" onclick="closeAssignModal()">Cancel</button>
+                                <button class="btn btn-primary" onclick="assignShoppingListToAgent('${listId}')">
+                                    <i class="fas fa-check"></i> Assign Agent
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                modal.style.display = 'block';
+            } catch (error) {
+                console.error('Error loading agents:', error);
+                alert('Error loading available agents.');
+            }
+        };
+
+        // Assign shopping list to agent
+        window.assignShoppingListToAgent = async (listId) => {
+            const agentId = document.getElementById('selectedAgent').value;
+            const notes = document.getElementById('assignNotes').value;
+
+            if (!agentId) {
+                alert('Please select an agent.');
+                return;
+            }
+
+            try {
+                const response = await CustomerServiceService.assignShoppingListToAgent(listId, agentId, notes);
+                
+                if (response.success) {
+                    alert('Shopping list assigned to agent successfully!');
+                    closeAssignModal();
+                    loadShoppingLists();
+                } else {
+                    alert(response.message || 'Failed to assign agent.');
+                }
+            } catch (error) {
+                console.error('Error assigning agent:', error);
+                alert(error.message || 'Error assigning agent.');
+            }
+        };
+
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             if (!checkAccess()) return;
+            loadShoppingLists();
             loadOrders();
             loadStats();
             setTimeout(() => {

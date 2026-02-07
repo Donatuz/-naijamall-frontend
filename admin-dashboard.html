@@ -405,6 +405,9 @@
                 <button class="tab active" onclick="switchTab('analytics')">
                     <i class="fas fa-chart-bar"></i> Analytics
                 </button>
+                <button class="tab" onclick="switchTab('shoppingLists')">
+                    <i class="fas fa-list-ul"></i> Shopping Lists
+                </button>
                 <button class="tab" onclick="switchTab('orders')">
                     <i class="fas fa-shopping-cart"></i> Orders
                 </button>
@@ -466,6 +469,34 @@
                             <i class="fas fa-users-cog"></i> Users by Role
                         </h3>
                         <canvas id="rolesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shopping Lists Tab -->
+            <div id="shoppingListsTab" class="tab-content" style="display: none;">
+                <div class="section-header">
+                    <h2>Shopping Lists / Quote Requests</h2>
+                    <p>Customer shopping list requests waiting for review and agent assignment</p>
+                </div>
+                
+                <div class="filter-bar">
+                    <select id="shoppingListStatusFilter" onchange="loadShoppingLists()">
+                        <option value="">All Statuses</option>
+                        <option value="pending" selected>Pending</option>
+                        <option value="reviewed">Reviewed</option>
+                        <option value="assigned">Assigned to Agent</option>
+                        <option value="converted">Converted to Order</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                    <button class="action-btn view" onclick="loadShoppingLists()">
+                        <i class="fas fa-sync"></i> Refresh
+                    </button>
+                </div>
+
+                <div id="shoppingListsContent">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i> Loading shopping lists...
                     </div>
                 </div>
             </div>
